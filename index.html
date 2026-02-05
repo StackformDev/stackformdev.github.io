@@ -6,11 +6,9 @@
     
     <title>STACKFORM</title>
     <meta name="description" content="STACKFORM crafts high-performance websites that command focus. Precision engineering meets visual narrative.">
-    <meta name="keywords" content="STACKFORM, Web Design, Web Development, rivor-13">
+    <meta name="keywords" content="STACKFORM, Web Design, Web Development">
     
-    <meta property="og:title" content="STACKFORM">
-    <meta property="og:description" content="Crafting websites that command focus.">
-    <meta property="og:type" content="website">
+    <meta name="google-site-verification" content="googleff37643a5075c7ad" />
 
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     
@@ -108,6 +106,7 @@
         }
         .nav-link:hover::after, .nav-link.current::after { width: 100%; left: 0; }
 
+        /* --- MOBILE MENU OVERLAY --- */
         .mobile-toggle {
             display: none;
             flex-direction: column;
@@ -245,8 +244,11 @@
         .bento-card h3 { font-family: 'Montserrat'; text-transform: uppercase; font-size: 1.1rem; margin-bottom: 15px; position: relative; z-index: 1; }
         .bento-card p { color: #555; font-size: 0.95rem; line-height: 1.6; position: relative; z-index: 1; }
 
+        /* --- MOBILE REFINEMENTS --- */
         @media (max-width: 1024px) {
             .hero, .bento-grid { padding-left: 8%; padding-right: 8%; }
+            
+            /* Hide desktop menu */
             .nav-menu {
                 position: fixed;
                 top: 0; right: -100%;
@@ -258,7 +260,9 @@
                 transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             }
             .nav-menu.open { right: 0; }
+            
             .mobile-toggle { display: flex; }
+            
             .bento-card, .bento-card.wide { grid-column: span 12; }
             .hero-btns { display: flex; flex-direction: column; gap: 12px; }
             .btn-secondary { margin-left: 0; }
@@ -274,10 +278,12 @@
 
     <header id="header">
         <a href="#" class="logo">STACKFORM</a>
+        
         <div class="mobile-toggle" id="mobileToggle">
             <span></span>
             <span></span>
         </div>
+
         <nav class="nav-menu" id="navMenu">
             <a href="#" class="nav-link current">Home</a>
             <a href="#" class="nav-link">Work</a>
@@ -312,6 +318,7 @@
     </div>
 
     <script>
+        // Scroll Logic
         window.addEventListener('scroll', () => {
             const header = document.getElementById('header');
             header.classList.toggle('active', window.scrollY > 50);
@@ -322,6 +329,7 @@
             });
         }, { passive: true });
 
+        // Bento Mouse Glow
         document.querySelectorAll('.bento-card').forEach(card => {
             card.onmousemove = e => {
                 const rect = card.getBoundingClientRect();
@@ -330,11 +338,13 @@
             };
         });
 
+        // Mobile Menu Toggle
         const mobileToggle = document.getElementById('mobileToggle');
         const navMenu = document.getElementById('navMenu');
 
         mobileToggle.onclick = () => {
             navMenu.classList.toggle('open');
+            // Basic animation for hamburger
             const spans = mobileToggle.querySelectorAll('span');
             spans[0].style.transform = navMenu.classList.contains('open') ? 'rotate(45deg) translate(5px, 6px)' : 'none';
             spans[1].style.transform = navMenu.classList.contains('open') ? 'rotate(-45deg) translate(5px, -6px)' : 'none';
