@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>STACKFORM</title>
+    <meta name="description" content="STACKFORM crafts high-performance websites that command focus. Precision engineering meets visual narrative.">
+    <meta name="keywords" content="STACKFORM, Web Design, Web Development, rivor-13">
+    
+    <meta property="og:title" content="STACKFORM">
+    <meta property="og:description" content="Crafting websites that command focus.">
+    <meta property="og:type" content="website">
+
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #0F1115; 
+            --accent: #2F6BFF;  
+            --purple: #bd00ff;
+            --ghost-shadow: rgba(47, 107, 255, 0.25); 
+            --bg: #ffffff;
+            --h-normal: 120px; 
+            --h-scrolled: 80px;
+            --grid-line: rgba(15, 17, 21, 0.06);
+            --radius: 8px; 
+        }
+
+        html { scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background-color: var(--bg);
+            color: var(--primary);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* --- FADING LINEAR GRID --- */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background-image: 
+                linear-gradient(var(--grid-line) 1px, transparent 1px),
+                linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent), 
+                        linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent), 
+                                linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            mask-composite: intersect;
+            -webkit-mask-composite: source-in;
+            pointer-events: none;
+        }
+
+        .leak-container {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none;
+        }
+        .leak { 
+            position: absolute; width: 75vw; height: 75vw; 
+            filter: blur(160px); border-radius: 50%; opacity: 0.07;
+            animation: fluidLeak 25s infinite alternate ease-in-out;
+        }
+        .leak-blue { background: var(--accent); top: -20%; right: -10%; }
+        .leak-purple { background: var(--purple); bottom: -20%; left: -10%; animation-delay: -5s; }
+
+        @keyframes fluidLeak {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(12%, 18%) scale(1.1); }
+        }
+
+        /* --- LINEAR GLASS HEADER --- */
+        header {
+            position: fixed; top: 0; width: 100%;
+            padding: 0 5%; 
+            height: var(--h-normal);
+            display: flex; align-items: center; justify-content: space-between;
+            z-index: 1000; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        header.active {
+            height: var(--h-scrolled);
+            background: rgba(255, 255, 255, 0.92);
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            border-bottom: 1px solid rgba(0,0,0,0.08);
+        }
+
+        .logo { 
+            font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; 
+            letter-spacing: -2px; text-decoration: none; color: var(--primary);
+            text-transform: uppercase;
+        }
+
+        .nav-menu { display: flex; gap: 40px; align-items: center; }
+        
+        .nav-link {
+            text-decoration: none; color: var(--primary); font-weight: 800; 
+            font-size: 0.75rem; letter-spacing: 0.15em; position: relative; 
+            padding: 10px 0; text-transform: uppercase;
+        }
+        .nav-link::after {
+            content: ''; position: absolute; bottom: -2px; height: 3px; width: 0;
+            background-color: var(--accent); right: 0; transition: width 0.4s ease;
+        }
+        .nav-link:hover::after, .nav-link.current::after { width: 100%; left: 0; }
+
+        .mobile-toggle {
+            display: none;
+            flex-direction: column;
+            gap: 6px;
+            cursor: pointer;
+            z-index: 1001;
+        }
+        .mobile-toggle span {
+            width: 25px;
+            height: 2px;
+            background: var(--primary);
+            transition: 0.3s;
+        }
+
+        /* --- BUTTONS --- */
+        .btn {
+            display: inline-block;
+            padding: 18px 36px;
+            border-radius: var(--radius);
+            font-weight: 800;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            border: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 50%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+        .btn-primary:hover::before { left: 150%; }
+
+        .btn-primary:hover {
+            background: var(--accent);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 30px var(--ghost-shadow);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--primary);
+            border: 1px solid rgba(15, 17, 21, 0.2);
+            margin-left: 12px;
+        }
+        .btn-secondary:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+            transform: translateY(-4px);
+        }
+
+        /* --- LINEAR HERO REVEAL --- */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 15%; 
+        }
+
+        .hero-title {
+            font-family: 'Montserrat', sans-serif; font-weight: 900;
+            font-size: clamp(3.5rem, 8.5vw, 7.5rem); line-height: 0.95;
+            letter-spacing: -0.05em; margin-bottom: 45px; color: var(--primary);
+        }
+        
+        .hero-title span { 
+            display: block; 
+            opacity: 0; 
+            filter: blur(12px); 
+            transform: translateY(40px); 
+            animation: linearEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        }
+        .hero-title span:nth-child(1) { animation-delay: 0.1s; }
+        .hero-title span:nth-child(2) { animation-delay: 0.25s; }
+        .hero-title span:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes linearEntrance { 
+            to { opacity: 1; filter: blur(0); transform: translateY(0); } 
+        }
+
+        .hero-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--primary); }
+
+        .hero-btns { 
+            opacity: 0; 
+            filter: blur(8px);
+            transform: translateY(20px); 
+            animation: linearEntrance 1s 0.6s forwards; 
+        }
+
+        /* --- BENTO REVEAL --- */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(12, 1fr);
+            gap: 24px;
+            padding: 0 15% 160px;
+        }
+        
+        .reveal {
+            opacity: 0;
+            filter: blur(8px);
+            transform: translateY(40px);
+            transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.active { opacity: 1; filter: blur(0); transform: translateY(0); }
+
+        .bento-card {
+            grid-column: span 4;
+            background: rgba(255,255,255,0.75);
+            border: 1px solid rgba(0,0,0,0.08);
+            padding: 45px;
+            border-radius: 24px;
+            position: relative;
+            overflow: hidden;
+        }
+        .bento-card.wide { grid-column: span 8; }
+        
+        .bento-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(400px circle at var(--mouse-x) var(--mouse-y), rgba(47, 107, 255, 0.08), transparent 40%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .bento-card h3 { font-family: 'Montserrat'; text-transform: uppercase; font-size: 1.1rem; margin-bottom: 15px; position: relative; z-index: 1; }
+        .bento-card p { color: #555; font-size: 0.95rem; line-height: 1.6; position: relative; z-index: 1; }
+
+        @media (max-width: 1024px) {
+            .hero, .bento-grid { padding-left: 8%; padding-right: 8%; }
+            .nav-menu {
+                position: fixed;
+                top: 0; right: -100%;
+                width: 100%; height: 100vh;
+                background: white;
+                flex-direction: column;
+                justify-content: center;
+                gap: 30px;
+                transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            }
+            .nav-menu.open { right: 0; }
+            .mobile-toggle { display: flex; }
+            .bento-card, .bento-card.wide { grid-column: span 12; }
+            .hero-btns { display: flex; flex-direction: column; gap: 12px; }
+            .btn-secondary { margin-left: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="leak-container">
+        <div class="leak leak-blue"></div>
+        <div class="leak leak-purple"></div>
+    </div>
+
+    <header id="header">
+        <a href="#" class="logo">STACKFORM</a>
+        <div class="mobile-toggle" id="mobileToggle">
+            <span></span>
+            <span></span>
+        </div>
+        <nav class="nav-menu" id="navMenu">
+            <a href="#" class="nav-link current">Home</a>
+            <a href="#" class="nav-link">Work</a>
+            <a href="#" class="nav-link">About</a>
+            <a href="#" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.7rem; border-radius: 6px;">Get Started</a>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">
+                <span>Crafting</span>
+                <span>Websites that</span>
+                <span class="outline">COMMAND focus.</span>
+            </h1>
+            <div class="hero-btns">
+                <a href="#" class="btn btn-primary">Explore Projects</a>
+                <a href="#" class="btn btn-secondary">Our Process</a>
+            </div>
+        </div>
+    </section>
+
+    <div class="bento-grid">
+        <div class="bento-card wide reveal">
+            <h3>Precision Engineering</h3>
+            <p>Infrastructure designed for conversion. We merge high-velocity code with pixel-perfect design standards.</p>
+        </div>
+        <div class="bento-card reveal">
+            <h3>Visual Narrative</h3>
+            <p>Directing user focus through strategic hierarchy and intentional motion.</p>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('scroll', () => {
+            const header = document.getElementById('header');
+            header.classList.toggle('active', window.scrollY > 50);
+            
+            document.querySelectorAll('.reveal').forEach(el => {
+                const rect = el.getBoundingClientRect();
+                if (rect.top < window.innerHeight - 50) el.classList.add('active');
+            });
+        }, { passive: true });
+
+        document.querySelectorAll('.bento-card').forEach(card => {
+            card.onmousemove = e => {
+                const rect = card.getBoundingClientRect();
+                card.style.setProperty('--mouse-x', `${e.clientX - rect.left}px`);
+                card.style.setProperty('--mouse-y', `${e.clientY - rect.top}px`);
+            };
+        });
+
+        const mobileToggle = document.getElementById('mobileToggle');
+        const navMenu = document.getElementById('navMenu');
+
+        mobileToggle.onclick = () => {
+            navMenu.classList.toggle('open');
+            const spans = mobileToggle.querySelectorAll('span');
+            spans[0].style.transform = navMenu.classList.contains('open') ? 'rotate(45deg) translate(5px, 6px)' : 'none';
+            spans[1].style.transform = navMenu.classList.contains('open') ? 'rotate(-45deg) translate(5px, -6px)' : 'none';
+        };
+    </script>
+</body>
+</html>
