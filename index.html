@@ -99,7 +99,7 @@
         @keyframes fadeInUpStagger { from { opacity: 0; transform: translateY(40px); filter: blur(10px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 
         .intake-grid-bg { position: absolute; inset: 0; z-index: -1; background-image: linear-gradient(var(--grid-line-dark) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line-dark) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; }
-        .intake-container { max-width: 700px; width: 90%; min-height: 400px; margin: 60px auto; padding: 45px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; backdrop-filter: blur(40px); position: relative; display: flex; flex-direction: column; justify-content: center; }
+        .intake-container { max-width: 700px; width: 90%; min-height: 480px; margin: 60px auto; padding: 45px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; backdrop-filter: blur(40px); position: relative; display: flex; flex-direction: column; justify-content: center; }
         .close-intake-x { position: absolute; top: 25px; right: 25px; cursor: pointer; font-size: 0.7rem; font-weight: 800; color: rgba(255,255,255,0.3); transition: 0.3s; padding: 10px; letter-spacing: 2px; z-index: 10; }
         .close-intake-x:hover { color: var(--accent); transform: scale(1.1); }
 
@@ -117,7 +117,7 @@
         .country-lock { width: 100px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; pointer-events: none; }
 
         /* SUCCESS STATE STYLES */
-        #successNote { display: none; text-align: center; }
+        #successNote { display: none; text-align: center; opacity: 0; }
         .success-icon { width: 60px; height: 60px; border: 2px solid #00ff88; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; color: #00ff88; font-size: 1.5rem; box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
 
         .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; padding: 0 15% 160px; }
@@ -327,18 +327,26 @@
             });
         }, { passive: true });
 
+        // MODAL TOGGLE WITH AUTO-RESET LOGIC
         function toggleIntake() {
             const overlay = document.getElementById('intakeOverlay');
+            const formContent = document.getElementById('formContent');
+            const successNote = document.getElementById('successNote');
+
             if (overlay.classList.contains('visible')) {
                 overlay.classList.add('closing');
                 setTimeout(() => { 
-                     overlay.classList.remove('visible', 'closing'); 
-                     overlay.style.display = 'none'; 
-                     document.body.style.overflow = 'auto'; 
-                     // Reset UI for next open
-                     document.getElementById('formContent').style.display = 'block';
-                     document.getElementById('successNote').style.display = 'none';
-                 }, 600);
+                    overlay.classList.remove('visible', 'closing'); 
+                    overlay.style.display = 'none'; 
+                    document.body.style.overflow = 'auto'; 
+                    
+                    // CRITICAL: Reset the view back to the form once the modal is closed
+                    // This ensures if they open it again, it's not a blank/success box.
+                    formContent.style.display = 'block';
+                    formContent.style.opacity = '1';
+                    successNote.style.display = 'none';
+                    successNote.style.opacity = '0';
+                }, 600);
             } else {
                 overlay.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
@@ -359,7 +367,7 @@
             }
         });
 
-        // AJAX Submission Logic - With Sleek Transition
+        // AJAX Submission Logic
         document.getElementById('projectForm').addEventListener('submit', function(e) {
             e.preventDefault();
 
@@ -380,14 +388,12 @@
             })
             .then(response => response.json())
             .then(data => {
-                // Fade out form and fade in success note
                 formContent.style.transition = "opacity 0.4s ease";
                 formContent.style.opacity = "0";
                 
                 setTimeout(() => {
                     formContent.style.display = "none";
                     successNote.style.display = "block";
-                    successNote.style.opacity = "0";
                     void successNote.offsetWidth;
                     successNote.style.transition = "opacity 0.6s ease";
                     successNote.style.opacity = "1";
