@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - STACKFORM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #0F1115; 
+            --accent: #2F6BFF;  
+            --purple: #bd00ff;
+            --ghost-shadow: rgba(47, 107, 255, 0.25); 
+            --bg: #ffffff;
+            --dark-bg: #050505;
+            --grid-line: rgba(15, 17, 21, 0.06);
+            --grid-line-dark: rgba(255, 255, 255, 0.03);
+            --radius: 24px; 
+            --h-normal: 120px; 
+            --h-scrolled: 80px;
+        }
+
+        html { scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg); color: var(--primary); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+        /* --- CINEMATIC SHUTTER --- */
+        #shutter {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--primary); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1), visibility 0.8s;
+            pointer-events: none;
+        }
+        body.loaded #shutter { opacity: 0; visibility: hidden; }
+
+        /* --- BACKGROUND GRID --- */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent);
+            pointer-events: none;
+        }
+
+        /* --- HEADER --- */
+        header { position: fixed; top: 0; width: 100%; padding: 0 5%; height: var(--h-normal); display: flex; align-items: center; justify-content: space-between; z-index: 1000; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        header.active { height: var(--h-scrolled); background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(0,0,0,0.08); }
+        .logo { font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; text-decoration: none; color: var(--primary); text-transform: uppercase; }
+        .nav-menu { display: flex; gap: 40px; align-items: center; }
+        .nav-link { text-decoration: none; color: var(--primary); font-weight: 800; font-size: 0.75rem; letter-spacing: 0.15em; position: relative; padding: 10px 0; text-transform: uppercase; }
+        .nav-link::after { content: ''; position: absolute; bottom: -2px; height: 3px; width: 0; background-color: var(--accent); right: 0; transition: width 0.4s ease; }
+        .nav-link:hover::after, .nav-link.current::after { width: 100%; left: 0; }
+
+        /* --- BUTTONS --- */
+        .btn { display: inline-block; padding: 18px 36px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; border: none; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--accent); transform: translateY(-5px); box-shadow: 0 12px 25px var(--ghost-shadow); }
+        .btn-secondary { background: transparent; color: var(--primary); border: 1px solid rgba(15, 17, 21, 0.2); }
+
+        /* --- PORTFOLIO CONTENT --- */
+        .portfolio-hero { padding: 220px 10% 80px; }
+        .portfolio-hero h1 { font-family: 'Montserrat'; font-size: clamp(3.5rem, 8vw, 7rem); line-height: 0.9; letter-spacing: -4px; text-transform: uppercase; }
+        
+        .portfolio-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 60px; 
+            padding: 0 10% 160px;
+        }
+
+        .project-card { text-decoration: none; color: inherit; opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .project-card.reveal { opacity: 1; transform: translateY(0); }
+
+        .img-wrapper {
+            width: 100%;
+            aspect-ratio: 16/10;
+            background: #f0f0f0;
+            overflow: hidden;
+            border-radius: var(--radius);
+            margin-bottom: 25px;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .project-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(100%);
+            transform: scale(1.05);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .project-card:hover .project-img {
+            filter: grayscale(0%);
+            transform: scale(1);
+        }
+
+        .project-card h3 { font-family: 'Montserrat'; font-size: 1.8rem; letter-spacing: -1px; margin-bottom: 8px; text-transform: uppercase; }
+        .project-card p { color: rgba(0,0,0,0.4); font-weight: 700; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; }
+
+        /* --- PREMIUM INTAKE OVERLAY (SYNCED WITH INDEX) --- */
+        #intakeOverlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: #050505; z-index: 2000; 
+            display: none; align-items: center; justify-content: center;
+            overflow-y: auto; color: #fff; 
+            transition: visibility 0.6s;
+        }
+        #intakeOverlay.visible { display: flex; animation: slideDownIn 0.8s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
+        #intakeOverlay.closing { animation: slideUpOut 0.6s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
+
+        @keyframes slideDownIn { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+        @keyframes slideUpOut { from { transform: translateY(0); } to { transform: translateY(-100%); } }
+
+        .intake-grid-bg { position: absolute; inset: 0; z-index: -1; background-image: linear-gradient(var(--grid-line-dark) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line-dark) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; }
+        .intake-container { max-width: 700px; width: 90%; margin: 60px auto; padding: 45px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; backdrop-filter: blur(40px); position: relative; }
+        
+        .close-intake-x { position: absolute; top: 25px; right: 25px; cursor: pointer; font-size: 0.7rem; font-weight: 800; color: rgba(255,255,255,0.3); transition: 0.3s; padding: 10px; letter-spacing: 2px; }
+        .close-intake-x:hover { color: var(--accent); transform: scale(1.1); }
+
+        .field { width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1); padding: 22px; border-radius: 12px; color: #fff; font-size: 1rem; transition: 0.3s; font-family: 'Inter', sans-serif; margin-bottom: 20px; }
+        .field:focus { outline: none; border-color: var(--accent); background: rgba(255, 255, 255, 0.07); }
+        
+        .service-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 10px 0 30px; }
+        .service-btn { padding: 14px 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.4); text-align: center; cursor: pointer; transition: 0.3s; }
+        .service-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+        .phone-group { display: flex; gap: 10px; margin-bottom: 20px; }
+        .country-lock { width: 100px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; }
+
+        @media (max-width: 900px) { .portfolio-grid { grid-template-columns: 1fr; gap: 40px; } .service-row { grid-template-columns: 1fr 1fr; } }
+    </style>
+</head>
+<body>
+
+    <div id="shutter"></div>
+
+    <div id="intakeOverlay">
+        <div class="intake-grid-bg"></div>
+        <div class="intake-container">
+            <div class="close-intake-x" onclick="toggleIntake()">ESC / CLOSE</div>
+            <h2 style="font-family:'Montserrat'; font-size:2.8rem; letter-spacing:-2px; margin-bottom:30px;">Initialize Project.</h2>
+            <form id="projectForm">
+                <input type="text" name="name" class="field" placeholder="FULL NAME" required>
+                <input type="email" name="email" class="field" placeholder="EMAIL ADDRESS" required>
+                
+                <div class="phone-group">
+                    <div class="country-lock">🇦🇺 +61</div>
+                    <input type="tel" name="phone" class="field" style="margin-bottom:0;" placeholder="PHONE NUMBER" required>
+                </div>
+
+                <p style="font-size:0.6rem; letter-spacing:2px; color:rgba(255,255,255,0.4); margin-bottom:12px; font-weight:800; text-transform:uppercase;">Select Service</p>
+                <div class="service-row">
+                    <div class="service-btn" onclick="selectService('Web Design', this)">Web Design</div>
+                    <div class="service-btn" onclick="selectService('UI/UX', this)">UI/UX</div>
+                    <div class="service-btn" onclick="selectService('E-Commerce', this)">E-Commerce</div>
+                    <div class="service-btn" onclick="selectService('Branding', this)">Branding</div>
+                </div>
+                <input type="hidden" name="service" id="serviceInput" required>
+
+                <textarea name="message" class="field" style="min-height:120px;" placeholder="PROJECT GOALS" required></textarea>
+                <button type="submit" class="btn btn-primary" style="width:100%; background:var(--accent); padding:22px;">Submit Project Request</button>
+            </form>
+        </div>
+    </div>
+
+    <header id="header">
+        <a href="index.html" class="logo">STACKFORM</a>
+        <nav class="nav-menu">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="portfolio.html" class="nav-link current">Work</a>
+            <a href="#" class="nav-link">About</a>
+            <a href="javascript:void(0)" onclick="toggleIntake()" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.7rem; border-radius: 6px;">Get Started</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="portfolio-hero">
+            <h1>Selected <span style="color:var(--accent)">Projects.</span></h1>
+        </section>
+
+        <div class="portfolio-grid">
+            <div class="project-card">
+                <div class="img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200" class="project-img" alt="Project">
+                </div>
+                <h3>Nexus Core</h3>
+                <p>Web Engineering / 2026</p>
+            </div>
+
+            <div class="project-card">
+                <div class="img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=1200" class="project-img" alt="Project">
+                </div>
+                <h3>Ether UI</h3>
+                <p>Interface Design / 2025</p>
+            </div>
+
+            <div class="project-card">
+                <div class="img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1614850523296-d8c1af93d400?auto=format&fit=crop&q=80&w=1200" class="project-img" alt="Project">
+                </div>
+                <h3>Aero Studio</h3>
+                <p>E-Commerce / 2026</p>
+            </div>
+
+            <div class="project-card">
+                <div class="img-wrapper">
+                    <img src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=1200" class="project-img" alt="Project">
+                </div>
+                <h3>Silicon Narrative</h3>
+                <p>Branding / 2025</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+            document.querySelectorAll('.project-card').forEach((card, i) => {
+                setTimeout(() => card.classList.add('reveal'), 400 + (i * 150));
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            document.getElementById('header').classList.toggle('active', window.scrollY > 50);
+        });
+
+        function toggleIntake() {
+            const overlay = document.getElementById('intakeOverlay');
+            if (overlay.classList.contains('visible')) {
+                overlay.classList.add('closing');
+                setTimeout(() => {
+                    overlay.classList.remove('visible', 'closing');
+                    overlay.style.display = 'none';
+                }, 600);
+                document.body.style.overflow = 'auto';
+            } else {
+                overlay.style.display = 'flex';
+                void overlay.offsetWidth;
+                overlay.classList.add('visible');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function selectService(value, element) {
+            document.getElementById('serviceInput').value = value;
+            document.querySelectorAll('.service-btn').forEach(item => item.classList.remove('active'));
+            element.classList.add('active');
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (e.key === "Escape" && document.getElementById('intakeOverlay').classList.contains('visible')) {
+                toggleIntake();
+            }
+        });
+    </script>
+</body>
+</html>
