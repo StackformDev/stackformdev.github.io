@@ -6,13 +6,14 @@
     
     <meta name="google-site-verification" content="THTrCrHzMRlBgni9F-QEF9iwuMUwRd85f-OchFK5PJs" />
     
-    <title>STACKFORM Digital Studio | stackformdev</title>
-    <meta name="description" content="STACKFORM (stackformdev) is a high-performance web design studio. We specialize in precision engineering and visual narratives for the modern web.">
-    <meta name="keywords" content="stackformdev, STACKFORM studio, web design agency, software development, linear ui, chromatix style">
+    <title>STACKFORM — Web Engineering</title>
+    <meta name="description" content="STACKFORM (stackformdev) crafts high-performance websites that command focus. We merge precision engineering with visual narrative to build scalable digital experiences.">
+    <meta name="keywords" content="stackformdev, STACKFORM studio, high-performance web design, luxury web development, UI/UX engineering">
     
     <meta property="og:title" content="STACKFORM | Digital Studio">
-    <meta property="og:description" content="Crafting websites that command focus.">
+    <meta property="og:description" content="Precision engineering meets visual narrative.">
     <meta property="og:type" content="website">
+    <meta property="og:url" content="https://stackformdev.github.io/">
 
     <script type="application/ld+json">
     {
@@ -21,12 +22,7 @@
       "name": "STACKFORM",
       "alternateName": "stackformdev",
       "url": "https://stackformdev.github.io/",
-      "logo": "https://stackformdev.github.io/logo.png",
-      "description": "High-performance digital studio specializing in web design and precision engineering.",
-      "address": {
-        "@type": "PostalAddress",
-        "addressCountry": "US"
-      }
+      "description": "High-performance digital studio specializing in web design and precision engineering."
     }
     </script>
 
@@ -90,7 +86,6 @@
             100% { transform: translate(12%, 18%) scale(1.1); }
         }
 
-        /* --- LINEAR GLASS HEADER --- */
         header {
             position: fixed; top: 0; width: 100%;
             padding: 0 5%; 
@@ -140,7 +135,6 @@
             transition: 0.3s;
         }
 
-        /* --- BUTTONS --- */
         .btn {
             display: inline-block;
             padding: 18px 36px;
@@ -158,16 +152,6 @@
         }
 
         .btn-primary { background: var(--primary); color: #fff; }
-        .btn-primary::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 50%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
-        }
-        .btn-primary:hover::before { left: 150%; }
-
         .btn-primary:hover {
             background: var(--accent);
             transform: translateY(-4px);
@@ -186,7 +170,6 @@
             transform: translateY(-4px);
         }
 
-        /* --- LINEAR HERO REVEAL --- */
         .hero {
             height: 100vh;
             display: flex;
@@ -224,7 +207,6 @@
             animation: linearEntrance 1s 0.6s forwards; 
         }
 
-        /* --- BENTO REVEAL --- */
         .bento-grid {
             display: grid;
             grid-template-columns: repeat(12, 1fr);
