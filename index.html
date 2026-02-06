@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="THTrCrHzMRlBgni9F-QEF9iwuMUwRd85f-OchFK5PJs" />
-    
-    <title>STACKFORM - Web Enginneering</title>
+    <title>STACKFORM - Web Engineering</title>
     <meta name="description" content="STACKFORM (stackformdev) crafts high-performance websites that command focus. We merge precision engineering with visual narrative to build scalable digital experiences.">
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -34,8 +33,8 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: var(--primary); z-index: 9999;
             display: flex; align-items: center; justify-content: center;
-            /* CHANGED TO 0s SO IT DOESN'T BLOCK TEXT */
-            transition: opacity 0s, visibility 0s;
+            /* Added smooth transition so it slides out elegantly */
+            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1), visibility 0.8s;
             pointer-events: none;
         }
         body.loaded #shutter { opacity: 0; visibility: hidden; }
@@ -77,13 +76,22 @@
         /* --- HERO --- */
         .hero { height: 100vh; display: flex; align-items: center; padding: 0 15%; }
         .hero-title { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: clamp(3.5rem, 8.5vw, 7.5rem); line-height: 0.95; letter-spacing: -0.05em; margin-bottom: 45px; }
-        .hero-title span { display: block; opacity: 0; filter: blur(12px); transform: translateY(40px); animation: linearEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        .hero-title span:nth-child(1) { animation-delay: 0.1s; }
-        .hero-title span:nth-child(2) { animation-delay: 0.25s; }
-        .hero-title span:nth-child(3) { animation-delay: 0.4s; }
+        
+        /* HIDDEN STATE: Spans start invisible and blurred */
+        .hero-title span { 
+            display: block; opacity: 0; filter: blur(12px); transform: translateY(40px); 
+        }
         .hero-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--primary); }
+        
+        /* HIDDEN STATE: Buttons start invisible */
+        .hero-btns { opacity: 0; filter: blur(8px); transform: translateY(20px); }
+
+        /* TRIGGER CLASS: Added via JavaScript */
+        .animate-in { 
+            animation: linearEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        }
+
         @keyframes linearEntrance { to { opacity: 1; filter: blur(0); transform: translateY(0); } }
-        .hero-btns { opacity: 0; filter: blur(8px); transform: translateY(20px); animation: linearEntrance 1s 0.6s forwards; }
 
         /* --- PREMIUM TRANSITION OVERLAY --- */
         #intakeOverlay { 
@@ -93,7 +101,6 @@
             overflow-y: auto; color: #fff; 
             transition: visibility 0.6s;
         }
-        
         #intakeOverlay.visible { display: flex; animation: slideDownIn 0.8s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
         #intakeOverlay.visible .intake-container { animation: fadeInUpStagger 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
         #intakeOverlay.closing { animation: slideUpOut 0.6s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
@@ -126,7 +133,7 @@
         .reveal { opacity: 0; filter: blur(8px); transform: translateY(40px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal.active { opacity: 1; filter: blur(0); transform: translateY(0); }
 
-        /* --- STATIC PREMIUM FOOTER --- */
+        /* --- FOOTER --- */
         footer { 
             background: #050505; 
             color: #fff; 
@@ -167,9 +174,8 @@
     </style>
 </head>
 <body>
-
     <div id="shutter"></div>
-
+    
     <div class="leak-container">
         <div class="leak leak-blue"></div>
         <div class="leak leak-purple"></div>
@@ -296,7 +302,29 @@
     </footer>
 
     <script>
-        window.addEventListener('load', () => { document.body.classList.add('loaded'); });
+        window.addEventListener('load', () => { 
+            // 1. Clear the shutter
+            document.body.classList.add('loaded'); 
+
+            // 2. Wait for the shutter to lift before animating text
+            setTimeout(() => {
+                // Find and animate the title spans with a delay between each
+                const spans = document.querySelectorAll('.hero-title span');
+                spans.forEach((span, index) => {
+                    setTimeout(() => {
+                        span.classList.add('animate-in');
+                    }, index * 200); // 200ms stagger between lines
+                });
+
+                // Animate buttons last
+                setTimeout(() => {
+                    document.querySelector('.hero-btns').classList.add('animate-in');
+                }, 600);
+
+            }, 500); // Trigger once the screen is clear
+        });
+
+        // Scroll logic for header and bento reveals
         window.addEventListener('scroll', () => {
             const header = document.getElementById('header');
             header.classList.toggle('active', window.scrollY > 50);
@@ -306,15 +334,16 @@
             });
         }, { passive: true });
 
+        // Intake Modal Toggle
         function toggleIntake() {
             const overlay = document.getElementById('intakeOverlay');
             if (overlay.classList.contains('visible')) {
                 overlay.classList.add('closing');
                 setTimeout(() => { 
-                    overlay.classList.remove('visible', 'closing'); 
-                    overlay.style.display = 'none'; 
-                    document.body.style.overflow = 'auto'; 
-                }, 600);
+                     overlay.classList.remove('visible', 'closing'); 
+                     overlay.style.display = 'none'; 
+                     document.body.style.overflow = 'auto'; 
+                 }, 600);
             } else {
                 overlay.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
@@ -323,12 +352,14 @@
             }
         }
 
+        // Service Selector Logic
         function selectService(value, element) {
             document.getElementById('serviceInput').value = value;
             document.querySelectorAll('.service-btn').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
         }
 
+        // Escape key to close modal
         window.addEventListener('keydown', (e) => {
             if (e.key === "Escape" && document.getElementById('intakeOverlay').classList.contains('visible')) {
                 toggleIntake();
