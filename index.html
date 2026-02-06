@@ -8,6 +8,7 @@
     <meta name="description" content="STACKFORM (stackformdev) crafts high-performance websites that command focus. We merge precision engineering with visual narrative to build scalable digital experiences.">
     
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
     
     <style>
         :root {
@@ -67,27 +68,13 @@
         .mobile-toggle { 
             display: none; 
             cursor: pointer; 
-            flex-direction: column; 
-            justify-content: center;
-            align-items: center;
-            gap: 6px; 
             z-index: 1001; 
-            padding: 10px; 
             width: 44px;
             height: 44px;
-            transition: 0.3s ease;
-        }
-        .mobile-toggle span { 
-            display: block; 
-            width: 28px; 
-            height: 2px; 
-            background: var(--primary); 
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
-            transform-origin: center;
         }
 
         @media (max-width: 900px) {
-            .mobile-toggle { display: flex; }
+            .mobile-toggle { display: flex; align-items: center; justify-content: center; }
             .nav-menu {
                 position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
                 background: #fff; flex-direction: column; justify-content: center;
@@ -95,18 +82,8 @@
             }
             .nav-menu.is-active { right: 0; }
             .nav-link { font-size: 1.5rem; }
-            
-            /* --- CROSS ANIMATION --- */
-            .mobile-toggle.is-active span:nth-child(1) { 
-                transform: translateY(8px) rotate(45deg);
-            }
-            .mobile-toggle.is-active span:nth-child(2) { 
-                opacity: 0;
-                transform: translateX(-20px);
-            }
-            .mobile-toggle.is-active span:nth-child(3) { 
-                transform: translateY(-8px) rotate(-45deg);
-            }
+            /* Fix button length on mobile */
+            .nav-menu .btn-primary { width: auto; min-width: 200px; }
         }
 
         /* --- BUTTONS --- */
@@ -168,15 +145,16 @@
         .service-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
         .service-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-        .phone-group { display: flex; gap: 10px; }
-        .country-lock { width: 100px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; pointer-events: none; }
-
-        #successNote { display: none; text-align: center; opacity: 0; }
-        .success-icon { width: 60px; height: 60px; border: 2px solid #00ff88; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; color: #00ff88; font-size: 1.5rem; box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
-
+        /* BENTO GRID REPAIR */
         .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; padding: 0 15% 160px; }
         .bento-card { grid-column: span 4; background: rgba(255,255,255,0.75); border: 1px solid rgba(0,0,0,0.08); padding: 45px; border-radius: 24px; position: relative; overflow: hidden; }
         .bento-card.wide { grid-column: span 8; }
+        
+        @media (max-width: 900px) {
+            .bento-grid { display: flex; flex-direction: column; padding: 0 5% 80px; }
+            .bento-card, .bento-card.wide { grid-column: span 12; width: 100%; }
+        }
+
         .reveal { opacity: 0; filter: blur(8px); transform: translateY(40px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal.active { opacity: 1; filter: blur(0); transform: translateY(0); }
 
@@ -215,7 +193,7 @@
         .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } .hero { padding: 0 5%; } .bento-grid { padding: 0 5% 100px; } }
+        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } .hero { padding: 0 5%; } }
         @media (max-width: 768px) { .service-row { grid-template-columns: 1fr 1fr; gap: 8px; } .intake-container { padding: 30px 20px; } .footer-grid { grid-template-columns: 1fr; gap: 40px; } }
     </style>
 </head>
@@ -245,8 +223,8 @@
                     <div style="margin-bottom:20px;">
                         <input type="email" name="email" class="field" placeholder="EMAIL ADDRESS" required>
                     </div>
-                    <div style="margin-bottom:20px;" class="phone-group">
-                        <div class="country-lock">🇦🇺 +61</div>
+                    <div style="margin-bottom:20px; display: flex; gap: 10px;">
+                        <div style="width: 100px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700;">🇦🇺 +61</div>
                         <input type="tel" name="phone" class="field" placeholder="PHONE NUMBER" required pattern="[0-9]{9,10}">
                     </div>
                     <div style="margin-bottom:30px;">
@@ -267,8 +245,8 @@
                 </form>
             </div>
 
-            <div id="successNote">
-                <div class="success-icon">✓</div>
+            <div id="successNote" style="display: none; text-align: center;">
+                <div style="width: 60px; height: 60px; border: 2px solid #00ff88; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; color: #00ff88; font-size: 1.5rem; box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);">✓</div>
                 <h2 style="font-family:'Montserrat'; font-size:2.5rem; letter-spacing:-2px; margin-bottom:15px;">Transmission Received.</h2>
                 <p style="color:rgba(255,255,255,0.5); font-size:0.9rem; line-height:1.6; max-width:400px; margin:0 auto 40px;">Your project parameters have been logged. Our engineering team will review the brief and contact you within 24 hours.</p>
                 <button onclick="toggleIntake()" class="btn btn-secondary" style="color:#fff; border-color:rgba(255,255,255,0.2);">Back to Studio</button>
@@ -280,9 +258,7 @@
         <a href="index.html" class="logo">STACKFORM</a>
         
         <div class="mobile-toggle" id="mobile-toggle">
-            <span></span>
-            <span></span>
-            <span></span>
+            <lottie-player id="lottie-menu" src="https://lottie.host/79069503-452a-4375-9e6e-2139e879f972/fO2R683iR9.json" background="transparent" speed="1.5" style="width: 44px; height: 44px;"></lottie-player>
         </div>
 
         <nav class="nav-menu" id="nav-menu">
@@ -364,19 +340,30 @@
     </footer>
 
     <script>
-        // MOBILE MENU LOGIC
         const mobileToggle = document.getElementById('mobile-toggle');
         const navMenu = document.getElementById('nav-menu');
+        const lottiePlayer = document.getElementById('lottie-menu');
+        let menuOpen = false;
 
         mobileToggle.addEventListener('click', () => {
-            mobileToggle.classList.toggle('is-active');
+            menuOpen = !menuOpen;
             navMenu.classList.toggle('is-active');
+            
+            // Lottie Playback Logic (Hamburger to X)
+            if(menuOpen) {
+                lottiePlayer.setDirection(1);
+                lottiePlayer.play();
+            } else {
+                lottiePlayer.setDirection(-1);
+                lottiePlayer.play();
+            }
         });
 
-        // Close menu when clicking a link
         document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
-            mobileToggle.classList.remove('is-active');
             navMenu.classList.remove('is-active');
+            lottiePlayer.setDirection(-1);
+            lottiePlayer.play();
+            menuOpen = false;
         }));
 
         window.addEventListener('load', () => { 
@@ -433,54 +420,20 @@
             element.classList.add('active');
         }
 
-        window.addEventListener('keydown', (e) => {
-            if (e.key === "Escape" && document.getElementById('intakeOverlay').classList.contains('visible')) {
-                toggleIntake();
-            }
-        });
-
         document.getElementById('projectForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const formContent = document.getElementById('formContent');
-            const successNote = document.getElementById('successNote');
             const btn = document.getElementById('submitBtn');
-
             btn.innerText = "INITIALIZING TRANSMISSION...";
-            btn.style.opacity = "0.7";
-            btn.style.pointerEvents = "none";
-
             const formData = new FormData(this);
             fetch("https://formsubmit.co/ajax/stackformdev@gmail.com", {
                 method: "POST",
                 body: formData,
                 headers: { 'Accept': 'application/json' }
             })
-            .then(response => response.json())
-            .then(data => {
-                formContent.style.transition = "opacity 0.4s ease";
-                formContent.style.opacity = "0";                                
-                setTimeout(() => {
-                    formContent.style.display = "none";
-                    successNote.style.display = "block";
-                    void successNote.offsetWidth;
-                    successNote.style.transition = "opacity 0.6s ease";
-                    successNote.style.opacity = "1";                                        
-                    this.reset();
-                    btn.innerText = "Submit Project Request";
-                    btn.style.opacity = "1";
-                    btn.style.pointerEvents = "all";
-                    document.querySelectorAll('.service-btn').forEach(item => item.classList.remove('active'));
-                }, 400);
-            })
-            .catch(error => {
-                btn.innerText = "CONNECTION ERROR.";
-                btn.style.background = "#ff4b4b";
-                setTimeout(() => {
-                    btn.innerText = "Retry Submission";
-                    btn.style.background = "var(--accent)";
-                    btn.style.opacity = "1";
-                    btn.style.pointerEvents = "all";
-                }, 3000);
+            .then(() => {
+                document.getElementById('formContent').style.display = "none";
+                document.getElementById('successNote').style.display = "block";
+                document.getElementById('successNote').style.opacity = "1";
             });
         });
     </script>
