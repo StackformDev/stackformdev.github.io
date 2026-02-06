@@ -64,33 +64,49 @@
         .nav-link:hover::after, .nav-link.current::after { width: 100%; left: 0; }
 
         /* --- MOBILE MENU UI --- */
-        .mobile-toggle { display: none; cursor: pointer; width: 30px; height: 20px; position: relative; z-index: 1001; }
-        .mobile-toggle span { display: block; position: absolute; height: 2px; width: 100%; background: var(--primary); border-radius: 2px; transition: .4s cubic-bezier(0.16, 1, 0.3, 1); }
-        .mobile-toggle span:nth-child(1) { top: 0; }
-        .mobile-toggle span:nth-child(2) { bottom: 0; }
+        .mobile-toggle { 
+            display: none; 
+            cursor: pointer; 
+            flex-direction: column; 
+            justify-content: center;
+            align-items: center;
+            gap: 6px; 
+            z-index: 1001; 
+            padding: 10px; 
+            width: 44px;
+            height: 44px;
+            transition: 0.3s ease;
+        }
+        .mobile-toggle span { 
+            display: block; 
+            width: 28px; 
+            height: 2px; 
+            background: var(--primary); 
+            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+            transform-origin: center;
+        }
 
         @media (max-width: 900px) {
-            .mobile-toggle { display: block; }
+            .mobile-toggle { display: flex; }
             .nav-menu {
                 position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
                 background: #fff; flex-direction: column; justify-content: center;
-                transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1); gap: 30px;
+                transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); gap: 30px;
             }
             .nav-menu.is-active { right: 0; }
             .nav-link { font-size: 1.5rem; }
             
-            /* Custom Back Arrow Animation with Overhang */
+            /* Enhanced Arrow Animation - No Fade Out */
             .mobile-toggle.is-active span:nth-child(1) { 
-                transform: rotate(-45deg); 
-                top: 9px; 
-                left: -4px; 
-                width: 20px; 
+                transform: translateY(6px) rotate(-45deg) scaleX(0.5); 
+                transform-origin: left center;
             }
             .mobile-toggle.is-active span:nth-child(2) { 
-                transform: rotate(45deg); 
-                bottom: 9px; 
-                left: -4px; 
-                width: 20px; 
+                transform: scaleX(1.1);
+            }
+            .mobile-toggle.is-active span:nth-child(3) { 
+                transform: translateY(-6px) rotate(45deg) scaleX(0.5);
+                transform-origin: left center;
             }
         }
 
@@ -108,13 +124,7 @@
         .hero-title { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: clamp(3.5rem, 8.5vw, 7.5rem); line-height: 0.95; letter-spacing: -0.05em; margin-bottom: 45px; }
         .hero-title span { display: block; opacity: 0; filter: blur(12px); transform: translateY(40px); }
         .hero-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--primary); }
-        .hero-btns { opacity: 0; filter: blur(8px); transform: translateY(20px); display: flex; }
-
-        @media (max-width: 768px) {
-            .hero-btns { flex-direction: column; gap: 20px; }
-            .btn-secondary { margin-left: 0; }
-            .hero-title { margin-bottom: 30px; }
-        }
+        .hero-btns { opacity: 0; filter: blur(8px); transform: translateY(20px); }
 
         .animate-in { animation: linearEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes linearEntrance { to { opacity: 1; filter: blur(0); transform: translateY(0); } }
@@ -123,10 +133,9 @@
         #intakeOverlay { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #050505; z-index: 2000; 
-            display: none; align-items: center; justify-content: flex-start;
+            display: none; align-items: center; justify-content: center;
             overflow-y: auto; color: #fff; 
             transition: visibility 0.6s;
-            padding: 80px 0; /* Prevents text from being cut off at top */
         }
         #intakeOverlay.visible { display: flex; animation: slideDownIn 0.8s cubic-bezier(0.85, 0, 0.15, 1) forwards; }
         #intakeOverlay.visible .intake-container { animation: fadeInUpStagger 0.8s 0.3s cubic-bezier(0.16, 1, 0.3, 1) both; }
@@ -137,7 +146,7 @@
         @keyframes fadeInUpStagger { from { opacity: 0; transform: translateY(40px); filter: blur(10px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
 
         .intake-grid-bg { position: absolute; inset: 0; z-index: -1; background-image: linear-gradient(var(--grid-line-dark) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line-dark) 1px, transparent 1px); background-size: 60px 60px; pointer-events: none; }
-        .intake-container { max-width: 700px; width: 90%; min-height: 480px; margin: 0 auto; padding: 45px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; backdrop-filter: blur(40px); position: relative; }
+        .intake-container { max-width: 700px; width: 90%; min-height: 480px; margin: 60px auto; padding: 45px; background: rgba(255, 255, 255, 0.02); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 32px; backdrop-filter: blur(40px); position: relative; display: flex; flex-direction: column; justify-content: center; }
         .close-intake-x { position: absolute; top: 25px; right: 25px; cursor: pointer; font-size: 0.7rem; font-weight: 800; color: rgba(255,255,255,0.3); transition: 0.3s; padding: 10px; letter-spacing: 2px; z-index: 10; }
         .close-intake-x:hover { color: var(--accent); transform: scale(1.1); }
 
@@ -162,12 +171,6 @@
         .bento-card.wide { grid-column: span 8; }
         .reveal { opacity: 0; filter: blur(8px); transform: translateY(40px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal.active { opacity: 1; filter: blur(0); transform: translateY(0); }
-
-        @media (max-width: 900px) {
-            .bento-card, .bento-card.wide { grid-column: span 12; }
-            .hero { padding: 0 5%; }
-            .bento-grid { padding: 0 5% 100px; }
-        }
 
         /* --- FOOTER --- */
         footer { 
@@ -204,8 +207,8 @@
         .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 768px) { .service-row { grid-template-columns: 1fr 1fr; gap: 8px; } .footer-grid { grid-template-columns: 1fr; gap: 40px; } }
+        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } .hero { padding: 0 5%; } .bento-grid { padding: 0 5% 100px; } }
+        @media (max-width: 768px) { .service-row { grid-template-columns: 1fr 1fr; gap: 8px; } .intake-container { padding: 30px 20px; } .footer-grid { grid-template-columns: 1fr; gap: 40px; } }
     </style>
 </head>
 <body>
@@ -222,7 +225,7 @@
             <div class="close-intake-x" onclick="toggleIntake()">ESC / CLOSE</div>
             
             <div id="formContent">
-                <h2 style="font-family:'Montserrat'; font-size:clamp(2rem, 5vw, 2.8rem); letter-spacing:-2px; margin-bottom:30px; padding-right: 40px;">Initialize Project.</h2>
+                <h2 style="font-family:'Montserrat'; font-size:2.8rem; letter-spacing:-2px; margin-bottom:30px; padding-right: 40px;">Initialize Project.</h2>
                 <form id="projectForm">
                     <input type="hidden" name="_subject" value="New Project Request | STACKFORM">
                     <input type="hidden" name="_template" value="table">
@@ -269,6 +272,7 @@
         <a href="index.html" class="logo">STACKFORM</a>
         
         <div class="mobile-toggle" id="mobile-toggle">
+            <span></span>
             <span></span>
             <span></span>
         </div>
@@ -352,6 +356,7 @@
     </footer>
 
     <script>
+        // MOBILE MENU LOGIC
         const mobileToggle = document.getElementById('mobile-toggle');
         const navMenu = document.getElementById('nav-menu');
 
@@ -360,6 +365,7 @@
             navMenu.classList.toggle('is-active');
         });
 
+        // Close menu when clicking a link
         document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
             mobileToggle.classList.remove('is-active');
             navMenu.classList.remove('is-active');
