@@ -82,7 +82,7 @@
             width: 28px; 
             height: 2px; 
             background: var(--primary); 
-            transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1); 
+            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); 
             transform-origin: center;
         }
 
@@ -96,17 +96,16 @@
             .nav-menu.is-active { right: 0; }
             .nav-link { font-size: 1.5rem; }
             
-            /* Enhanced Arrow Animation - No Fade Out */
+            /* --- CROSS ANIMATION --- */
             .mobile-toggle.is-active span:nth-child(1) { 
-                transform: translateY(6px) rotate(-45deg) scaleX(0.5); 
-                transform-origin: left center;
+                transform: translateY(8px) rotate(45deg);
             }
             .mobile-toggle.is-active span:nth-child(2) { 
-                transform: scaleX(1.1);
+                opacity: 0;
+                transform: translateX(-20px);
             }
             .mobile-toggle.is-active span:nth-child(3) { 
-                transform: translateY(-6px) rotate(45deg) scaleX(0.5);
-                transform-origin: left center;
+                transform: translateY(-8px) rotate(-45deg);
             }
         }
 
@@ -124,10 +123,19 @@
         .hero-title { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: clamp(3.5rem, 8.5vw, 7.5rem); line-height: 0.95; letter-spacing: -0.05em; margin-bottom: 45px; }
         .hero-title span { display: block; opacity: 0; filter: blur(12px); transform: translateY(40px); }
         .hero-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--primary); }
-        .hero-btns { opacity: 0; filter: blur(8px); transform: translateY(20px); }
+        .hero-btns { opacity: 0; filter: blur(8px); transform: translateY(20px); display: flex; align-items: center; }
 
         .animate-in { animation: linearEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes linearEntrance { to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+
+        /* HERO FIXES FOR MOBILE */
+        @media (max-width: 768px) {
+            .hero { padding: 0 5%; }
+            .hero-title { margin-bottom: 30px; }
+            .hero-btns { flex-direction: column; gap: 15px; width: 100%; align-items: flex-start; }
+            .btn-secondary { margin-left: 0; width: auto; }
+            .btn { width: 100%; text-align: center; }
+        }
 
         /* --- PREMIUM TRANSITION OVERLAY --- */
         #intakeOverlay { 
