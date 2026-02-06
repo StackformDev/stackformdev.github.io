@@ -223,10 +223,10 @@
     </div>
 
     <header id="header">
-        <a href="#" class="logo">STACKFORM</a>
+        <a href="index.html" class="logo">STACKFORM</a>
         <nav class="nav-menu">
-            <a href="#" class="nav-link current">Home</a>
-            <a href="#" class="nav-link">Work</a>
+            <a href="index.html" class="nav-link current">Home</a>
+            <a href="portfolio.html" class="nav-link">Work</a>
             <a href="#" class="nav-link">About</a>
             <a href="javascript:void(0)" onclick="toggleIntake()" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.7rem; border-radius: 6px;">Get Started</a>
         </nav>
@@ -240,7 +240,7 @@
                 <span class="outline">COMMAND focus.</span>
             </h1>
             <div class="hero-btns">
-                <a href="#" class="btn btn-primary">Explore Projects</a>
+                <a href="portfolio.html" class="btn btn-primary">Explore Projects</a>
                 <a href="javascript:void(0)" class="btn btn-secondary" onclick="toggleIntake()">Inquire Now</a>
             </div>
         </div>
@@ -260,7 +260,7 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-brand">
-                <a href="#" class="logo">STACKFORM</a>
+                <a href="index.html" class="logo">STACKFORM</a>
                 <p style="color:rgba(255,255,255,0.4); font-size:0.9rem; line-height: 1.7; max-width: 300px; margin-top: 20px;">
                     Digital studio crafting performance-driven interfaces for the next era of the web.
                 </p>
@@ -272,7 +272,7 @@
             <div class="footer-col">
                 <h4>Sitemap</h4>
                 <ul>
-                    <li><a href="#">Work</a></li>
+                    <li><a href="portfolio.html">Work</a></li>
                     <li><a href="#">Services</a></li>
                     <li><a href="#">About</a></li>
                     <li><a href="javascript:void(0)" onclick="toggleIntake()">Contact</a></li>
@@ -340,8 +340,6 @@
                     overlay.style.display = 'none'; 
                     document.body.style.overflow = 'auto'; 
                     
-                    // CRITICAL: Reset the view back to the form once the modal is closed
-                    // This ensures if they open it again, it's not a blank/success box.
                     formContent.style.display = 'block';
                     formContent.style.opacity = '1';
                     successNote.style.display = 'none';
