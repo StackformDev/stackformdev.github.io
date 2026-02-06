@@ -54,14 +54,34 @@
         .leak-purple { background: var(--purple); bottom: -20%; left: -10%; animation-delay: -5s; }
         @keyframes fluidLeak { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(12%, 18%) scale(1.1); } }
 
-        /* --- HEADER --- */
+        /* --- HEADER & NAVIGATION --- */
         header { position: fixed; top: 0; width: 100%; padding: 0 5%; height: var(--h-normal); display: flex; align-items: center; justify-content: space-between; z-index: 1000; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         header.active { height: var(--h-scrolled); background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(0,0,0,0.08); }
-        .logo { font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; text-decoration: none; color: var(--primary); text-transform: uppercase; }
+        .logo { font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; text-decoration: none; color: var(--primary); text-transform: uppercase; z-index: 1001; }
         .nav-menu { display: flex; gap: 40px; align-items: center; }
         .nav-link { text-decoration: none; color: var(--primary); font-weight: 800; font-size: 0.75rem; letter-spacing: 0.15em; position: relative; padding: 10px 0; text-transform: uppercase; }
         .nav-link::after { content: ''; position: absolute; bottom: -2px; height: 3px; width: 0; background-color: var(--accent); right: 0; transition: width 0.4s ease; }
         .nav-link:hover::after, .nav-link.current::after { width: 100%; left: 0; }
+
+        /* --- MOBILE MENU UI --- */
+        .mobile-toggle { display: none; cursor: pointer; flex-direction: column; gap: 6px; z-index: 1001; padding: 10px; }
+        .mobile-toggle span { display: block; width: 28px; height: 2px; background: var(--primary); transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+
+        @media (max-width: 900px) {
+            .mobile-toggle { display: flex; }
+            .nav-menu {
+                position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+                background: #fff; flex-direction: column; justify-content: center;
+                transition: 0.5s cubic-bezier(0.16, 1, 0.3, 1); gap: 30px;
+            }
+            .nav-menu.is-active { right: 0; }
+            .nav-link { font-size: 1.5rem; }
+            
+            /* Hamburger Animation */
+            .mobile-toggle.is-active span:nth-child(1) { transform: translateY(8px) rotate(45deg); }
+            .mobile-toggle.is-active span:nth-child(2) { opacity: 0; }
+            .mobile-toggle.is-active span:nth-child(3) { transform: translateY(-8px) rotate(-45deg); }
+        }
 
         /* --- BUTTONS --- */
         .btn { 
@@ -116,7 +136,6 @@
         .phone-group { display: flex; gap: 10px; }
         .country-lock { width: 100px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; pointer-events: none; }
 
-        /* SUCCESS STATE STYLES */
         #successNote { display: none; text-align: center; opacity: 0; }
         .success-icon { width: 60px; height: 60px; border: 2px solid #00ff88; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; color: #00ff88; font-size: 1.5rem; box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
 
@@ -224,7 +243,14 @@
 
     <header id="header">
         <a href="index.html" class="logo">STACKFORM</a>
-        <nav class="nav-menu">
+        
+        <div class="mobile-toggle" id="mobile-toggle">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+
+        <nav class="nav-menu" id="nav-menu">
             <a href="index.html" class="nav-link current">Home</a>
             <a href="portfolio.html" class="nav-link">Work</a>
             <a href="#" class="nav-link">About</a>
@@ -303,6 +329,21 @@
     </footer>
 
     <script>
+        // MOBILE MENU LOGIC
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navMenu = document.getElementById('nav-menu');
+
+        mobileToggle.addEventListener('click', () => {
+            mobileToggle.classList.toggle('is-active');
+            navMenu.classList.toggle('is-active');
+        });
+
+        // Close menu when clicking a link
+        document.querySelectorAll('.nav-link').forEach(n => n.addEventListener('click', () => {
+            mobileToggle.classList.remove('is-active');
+            navMenu.classList.remove('is-active');
+        }));
+
         window.addEventListener('load', () => { 
             document.body.classList.add('loaded'); 
             setTimeout(() => {
@@ -327,7 +368,6 @@
             });
         }, { passive: true });
 
-        // MODAL TOGGLE WITH AUTO-RESET LOGIC
         function toggleIntake() {
             const overlay = document.getElementById('intakeOverlay');
             const formContent = document.getElementById('formContent');
@@ -339,7 +379,6 @@
                     overlay.classList.remove('visible', 'closing'); 
                     overlay.style.display = 'none'; 
                     document.body.style.overflow = 'auto'; 
-                    
                     formContent.style.display = 'block';
                     formContent.style.opacity = '1';
                     successNote.style.display = 'none';
@@ -365,10 +404,8 @@
             }
         });
 
-        // AJAX Submission Logic
         document.getElementById('projectForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
             const formContent = document.getElementById('formContent');
             const successNote = document.getElementById('successNote');
             const btn = document.getElementById('submitBtn');
@@ -378,7 +415,6 @@
             btn.style.pointerEvents = "none";
 
             const formData = new FormData(this);
-
             fetch("https://formsubmit.co/ajax/stackformdev@gmail.com", {
                 method: "POST",
                 body: formData,
@@ -387,15 +423,13 @@
             .then(response => response.json())
             .then(data => {
                 formContent.style.transition = "opacity 0.4s ease";
-                formContent.style.opacity = "0";
-                
+                formContent.style.opacity = "0";                                
                 setTimeout(() => {
                     formContent.style.display = "none";
                     successNote.style.display = "block";
                     void successNote.offsetWidth;
                     successNote.style.transition = "opacity 0.6s ease";
-                    successNote.style.opacity = "1";
-                    
+                    successNote.style.opacity = "1";                                        
                     this.reset();
                     btn.innerText = "Submit Project Request";
                     btn.style.opacity = "1";
