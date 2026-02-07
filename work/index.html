@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portfolio - STACKFORM</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #0F1115; 
+            --accent: #2F6BFF;  
+            --purple: #bd00ff;
+            --ghost-shadow: rgba(47, 107, 255, 0.25); 
+            --bg: #ffffff;
+            --dark-bg: #050505;
+            --grid-line: rgba(15, 17, 21, 0.06);
+            --radius: 24px; 
+            --h-normal: 120px; 
+            --h-scrolled: 80px;
+        }
+
+        html { scroll-behavior: smooth; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background-color: var(--bg); color: var(--primary); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+
+        /* --- CINEMATIC SHUTTER --- */
+        #shutter {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--primary); z-index: 9999;
+            display: flex; align-items: center; justify-content: center;
+            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1), visibility 0.8s;
+            pointer-events: none;
+        }
+        body.loaded #shutter { opacity: 0; visibility: hidden; }
+
+        /* --- BACKGROUND GRID & LEAKS --- */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 60px 60px;
+            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent), linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent), linear-gradient(to right, transparent, black 15%, black 85%, transparent);
+            mask-composite: intersect; -webkit-mask-composite: source-in; pointer-events: none;
+        }
+
+        .leak-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
+        .leak { position: absolute; width: 75vw; height: 75vw; filter: blur(160px); border-radius: 50%; opacity: 0.07; animation: fluidLeak 25s infinite alternate ease-in-out; }
+        .leak-blue { background: var(--accent); top: -20%; right: -10%; }
+        .leak-purple { background: var(--purple); bottom: -20%; left: -10%; animation-delay: -5s; }
+        @keyframes fluidLeak { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(12%, 18%) scale(1.1); } }
+
+        /* --- HEADER & NAVIGATION --- */
+        header { position: fixed; top: 0; width: 100%; padding: 0 5%; height: var(--h-normal); display: flex; align-items: center; justify-content: space-between; z-index: 1000; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        header.active { height: var(--h-scrolled); background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(0,0,0,0.08); }
+        .logo { font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; text-decoration: none; color: var(--primary); text-transform: uppercase; z-index: 1001; }
+        
+        .nav-menu { display: flex; gap: 40px; align-items: center; }
+        .nav-link { text-decoration: none; color: var(--primary); font-weight: 800; font-size: 0.75rem; letter-spacing: 0.15em; position: relative; padding: 10px 0; text-transform: uppercase; }
+        .nav-link::after { content: ''; position: absolute; bottom: -2px; height: 3px; width: 0; background-color: var(--accent); right: 0; transition: width 0.4s ease; }
+        .nav-link:hover::after, .nav-link.current::after { width: 100%; left: 0; }
+
+        /* --- MOBILE MENU --- */
+        .mobile-toggle { display: none; cursor: pointer; z-index: 1100; width: 44px; height: 44px; align-items: center; justify-content: center; }
+        .menu-icon { width: 26px; height: 16px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+        .menu-icon span { display: block; width: 100%; height: 2px; background-color: var(--primary); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); transform-origin: center; }
+        .menu-icon.is-active span:nth-child(2) { transform: scaleX(0); }
+        .menu-icon.is-active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+        .menu-icon.is-active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+
+        @media (max-width: 900px) {
+            .mobile-toggle { display: flex; }
+            .nav-menu {
+                position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
+                background: #fff; flex-direction: column; justify-content: center;
+                transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); gap: 30px; z-index: 1050;
+            }
+            .nav-menu.is-active { right: 0; }
+            .nav-link { font-size: 1.5rem; }
+        }
+
+        /* --- BUTTONS --- */
+        .btn { display: inline-block; padding: 18px 36px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; border: none; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--accent); transform: translateY(-5px); box-shadow: 0 12px 25px var(--ghost-shadow); }
+
+        /* --- PORTFOLIO CONTENT --- */
+        .portfolio-hero { padding: 220px 10% 80px; }
+        .portfolio-hero h1 { font-family: 'Montserrat'; font-size: clamp(3.5rem, 8vw, 7rem); line-height: 0.9; letter-spacing: -4px; text-transform: uppercase; }
+        
+        .portfolio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 60px; padding: 0 10% 160px; }
+        .project-card { text-decoration: none; color: inherit; opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
+        .project-card.reveal { opacity: 1; transform: translateY(0); }
+        .img-wrapper { width: 100%; aspect-ratio: 16/10; background: #f0f0f0; overflow: hidden; border-radius: var(--radius); margin-bottom: 25px; border: 1px solid rgba(0,0,0,0.05); }
+        .project-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transform: scale(1.05); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .project-card:hover .project-img { filter: grayscale(0%); transform: scale(1); }
+        .project-card h3 { font-family: 'Montserrat'; font-size: 1.8rem; letter-spacing: -1px; margin-bottom: 8px; text-transform: uppercase; }
+        .project-card p { color: rgba(0,0,0,0.4); font-weight: 700; font-size: 0.75rem; letter-spacing: 2px; text-transform: uppercase; }
+
+        /* --- FOOTER --- */
+        footer { background: #050505; color: #fff; padding: 160px 15% 60px; position: relative; z-index: 10; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 120px; }
+        .footer-brand .logo { color: #fff; font-size: 1.5rem; margin-bottom: 25px; display: block; }
+        .footer-col h4 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(255, 255, 255, 0.3); margin-bottom: 35px; font-weight: 800; }
+        .footer-col ul { list-style: none; }
+        .footer-col ul li { margin-bottom: 18px; }
+        .footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: 0.4s ease; display: inline-block; }
+        .footer-col ul:hover li a { opacity: 0.4; }
+        .footer-col ul li a:hover { color: #ffffff; opacity: 1 !important; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+        .footer-bottom { padding-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; }
+        .footer-bottom p { font-size: 0.65rem; color: rgba(255, 255, 255, 0.25); letter-spacing: 0.15em; font-weight: 700; text-transform: uppercase; }
+        .status-pill { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+
+        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 900px) { .portfolio-grid { grid-template-columns: 1fr; gap: 40px; } .footer-grid { grid-template-columns: 1fr; gap: 40px; } }
+    </style>
+</head>
+<body>
+
+    <div id="shutter"></div>
+    <div class="leak-container"><div class="leak leak-blue"></div><div class="leak leak-purple"></div></div>
+
+    <header id="header">
+        <a href="index.html" class="logo">STACKFORM</a>
+        <div class="mobile-toggle" id="mobile-toggle">
+            <div class="menu-icon" id="menu-icon"><span></span><span></span><span></span></div>
+        </div>
+        <nav class="nav-menu" id="nav-menu">
+            <a href="index.html" class="nav-link">Home</a>
+            <a href="portfolio.html" class="nav-link current">Work</a>
+            <a href="about.html" class="nav-link">About</a>
+            <a href="inquiry.html" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.7rem;">Get Started</a>
+        </nav>
+    </header>
+
+    <main>
+        <section class="portfolio-hero">
+            <h1>Selected <span style="color:var(--accent)">Projects.</span></h1>
+        </section>
+
+        <div class="portfolio-grid">
+            <div class="project-card">
+                <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200" class="project-img" alt="Project"></div>
+                <h3>Nexus Core</h3>
+                <p>Web Engineering / 2026</p>
+            </div>
+            <div class="project-card">
+                <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?auto=format&fit=crop&q=80&w=1200" class="project-img" alt="Project"></div>
+                <h3>Ether UI</h3>
+                <p>Interface Design / 2025</p>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-grid">
+            <div class="footer-brand">
+                <a href="index.html" class="logo">STACKFORM</a>
+                <p style="color:rgba(255,255,255,0.4); font-size:0.9rem; line-height: 1.7; max-width: 300px; margin-top: 20px;">Digital studio crafting performance-driven interfaces for the next era of the web.</p>
+                <div class="status-pill" style="margin-top: 30px;"><div class="status-dot"></div>Available for Q1 2026 Projects</div>
+            </div>
+            <div class="footer-col">
+                <h4>Sitemap</h4>
+                <ul>
+                    <li><a href="portfolio.html">Work</a></li>
+                    <li><a href="#">Services</a></li>
+                    <li><a href="about.html">About</a></li>
+                    <li><a href="inquiry.html">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Social</h4>
+                <ul>
+                    <li><a href="#">Twitter / X</a></li>
+                    <li><a href="#">LinkedIn</a></li>
+                    <li><a href="#">Instagram</a></li>
+                    <li><a href="#">Dribbble</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Studio</h4>
+                <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; line-height: 1.8;">Melbourne, AU<br>Remote Worldwide<br>stackformdev@gmail.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 STACKFORM STUDIO — ALL RIGHTS RESERVED</p>
+            <p style="opacity: 0.6;">DESIGNED BY PRECISION</p>
+        </div>
+    </footer>
+
+    <script>
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        const menuIcon = document.getElementById('menu-icon');
+
+        mobileToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('is-active');
+            menuIcon.classList.toggle('is-active');
+        });
+
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
+            document.querySelectorAll('.project-card').forEach((card, i) => {
+                setTimeout(() => card.classList.add('reveal'), 400 + (i * 150));
+            });
+        });
+
+        window.addEventListener('scroll', () => {
+            document.getElementById('header').classList.toggle('active', window.scrollY > 50);
+        });
+    </script>
+</body>
+</html>
