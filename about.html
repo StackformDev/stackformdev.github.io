@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="THTrCrHzMRlBgni9F-QEF9iwuMUwRd85f-OchFK5PJs" />
-    <title>STACKFORM - Web Engineering</title>
-    <meta name="description" content="STACKFORM (stackformdev) crafts high-performance websites that command focus. We merge precision engineering with visual narrative to build scalable digital experiences.">
-    
+    <title>About - STACKFORM</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -17,10 +14,10 @@
             --ghost-shadow: rgba(47, 107, 255, 0.25); 
             --bg: #ffffff;
             --dark-bg: #050505;
+            --grid-line: rgba(15, 17, 21, 0.06);
+            --radius: 24px; 
             --h-normal: 120px; 
             --h-scrolled: 80px;
-            --grid-line: rgba(15, 17, 21, 0.06);
-            --radius: 8px; 
         }
 
         html { scroll-behavior: smooth; }
@@ -37,7 +34,7 @@
         }
         body.loaded #shutter { opacity: 0; visibility: hidden; }
 
-        /* --- BACKGROUND GRID --- */
+        /* --- BACKGROUND GRID & LEAKS --- */
         body::before {
             content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
@@ -57,6 +54,7 @@
         header { position: fixed; top: 0; width: 100%; padding: 0 5%; height: var(--h-normal); display: flex; align-items: center; justify-content: space-between; z-index: 1000; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         header.active { height: var(--h-scrolled); background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(0,0,0,0.08); }
         .logo { font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; text-decoration: none; color: var(--primary); text-transform: uppercase; z-index: 1001; }
+        
         .nav-menu { display: flex; gap: 40px; align-items: center; }
         .nav-link { text-decoration: none; color: var(--primary); font-weight: 800; font-size: 0.75rem; letter-spacing: 0.15em; position: relative; padding: 10px 0; text-transform: uppercase; }
         .nav-link::after { content: ''; position: absolute; bottom: -2px; height: 3px; width: 0; background-color: var(--accent); right: 0; transition: width 0.4s ease; }
@@ -82,38 +80,24 @@
         }
 
         /* --- BUTTONS --- */
-        .btn { display: inline-block; padding: 18px 36px; border-radius: var(--radius); font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; border: none; position: relative; }
+        .btn { display: inline-block; padding: 18px 36px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; border: none; }
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-primary:hover { background: var(--accent); transform: translateY(-5px); box-shadow: 0 12px 25px var(--ghost-shadow); }
-        .btn-secondary { background: transparent; color: var(--primary); border: 1px solid rgba(15, 17, 21, 0.2); margin-left: 12px; }
-        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-5px); }
 
-        /* --- HERO --- */
-        .hero { height: 100vh; display: flex; align-items: center; padding: 0 15%; }
-        .hero-title { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: clamp(3.5rem, 8.5vw, 7.5rem); line-height: 0.95; letter-spacing: -0.05em; margin-bottom: 45px; }
-        .hero-title span { display: block; opacity: 0; filter: blur(12px); transform: translateY(40px); }
-        .hero-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--primary); }
-        .hero-btns { opacity: 0; filter: blur(8px); transform: translateY(20px); display: flex; align-items: center; }
-        .animate-in { animation: linearEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes linearEntrance { to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+        /* --- ABOUT CONTENT --- */
+        .about-hero { padding: 220px 10% 100px; }
+        .about-hero h1 { font-family: 'Montserrat'; font-size: clamp(3.5rem, 8vw, 7rem); line-height: 0.9; letter-spacing: -4px; text-transform: uppercase; margin-bottom: 40px; }
+        
+        .about-intro { display: grid; grid-template-columns: 1.2fr 1fr; gap: 80px; padding: 0 10% 120px; align-items: start; }
+        .about-intro p { font-size: 1.25rem; line-height: 1.6; color: rgba(15,17,21,0.8); font-weight: 500; }
+        .about-details { font-size: 0.9rem; line-height: 1.8; color: rgba(15,17,21,0.5); }
 
-        @media (max-width: 768px) {
-            .hero { padding: 0 5%; }
-            .hero-btns { flex-direction: column; gap: 15px; width: 100%; align-items: flex-start; }
-            .btn-secondary { margin-left: 0; width: 100%; text-align: center; }
-            .btn { width: 100%; text-align: center; }
-        }
-
-        /* --- BENTO GRID --- */
-        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; padding: 0 15% 160px; }
-        .bento-card { grid-column: span 4; background: rgba(255,255,255,0.75); border: 1px solid rgba(0,0,0,0.08); padding: 45px; border-radius: 24px; position: relative; overflow: hidden; }
+        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; padding: 0 10% 160px; }
+        .bento-card { grid-column: span 4; background: rgba(255,255,255,0.75); border: 1px solid rgba(0,0,0,0.08); padding: 45px; border-radius: 24px; opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
         .bento-card.wide { grid-column: span 8; }
-        .reveal { opacity: 0; filter: blur(8px); transform: translateY(40px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal.active { opacity: 1; filter: blur(0); transform: translateY(0); }
-
-        @media (max-width: 900px) {
-            .bento-grid { display: flex; flex-direction: column; padding: 0 5% 80px; }
-        }
+        .bento-card.reveal { opacity: 1; transform: translateY(0); }
+        .bento-card h3 { font-family: 'Montserrat'; font-size: 1.5rem; letter-spacing: -1px; margin-bottom: 15px; text-transform: uppercase; }
+        .bento-card p { color: rgba(15,17,21,0.6); line-height: 1.6; font-size: 0.95rem; }
 
         /* --- FOOTER --- */
         footer { background: #050505; color: #fff; padding: 160px 15% 60px; position: relative; z-index: 10; border-top: 1px solid rgba(255, 255, 255, 0.05); }
@@ -131,11 +115,12 @@
         .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 40px; } }
+        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } .about-intro { grid-template-columns: 1fr; gap: 40px; } }
+        @media (max-width: 900px) { .bento-grid { display: flex; flex-direction: column; } .footer-grid { grid-template-columns: 1fr; gap: 40px; } }
     </style>
 </head>
 <body>
+
     <div id="shutter"></div>
     <div class="leak-container"><div class="leak leak-blue"></div><div class="leak leak-purple"></div></div>
 
@@ -145,37 +130,45 @@
             <div class="menu-icon" id="menu-icon"><span></span><span></span><span></span></div>
         </div>
         <nav class="nav-menu" id="nav-menu">
-            <a href="index.html" class="nav-link current">Home</a>
+            <a href="index.html" class="nav-link">Home</a>
             <a href="portfolio.html" class="nav-link">Work</a>
-            <a href="about.html" class="nav-link">About</a>
-            <a href="inquiry.html" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.7rem; border-radius: 6px;">Get Started</a>
+            <a href="about.html" class="nav-link current">About</a>
+            <a href="inquiry.html" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.7rem;">Get Started</a>
         </nav>
     </header>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">
-                <span>Crafting</span>
-                <span>Websites that</span>
-                <span class="outline">COMMAND focus.</span>
-            </h1>
-            <div class="hero-btns">
-                <a href="portfolio.html" class="btn btn-primary">Explore Projects</a>
-                <a href="inquiry.html" class="btn btn-secondary">Inquire Now</a>
+    <main>
+        <section class="about-hero">
+            <h1>We build for the <span style="color:var(--accent)">Attention</span> economy.</h1>
+        </section>
+
+        <section class="about-intro">
+            <p>STACKFORM is a Melbourne-based digital engineering studio. We don't just build websites; we engineer digital environments that demand user focus and drive high-velocity conversion.</p>
+            <div class="about-details">
+                <p style="margin-bottom: 20px;">In an era of infinite scroll and diminishing attention spans, precision is the only currency that matters. We merge technical rigor with visual storytelling.</p>
+                <p>Our process is rooted in the intersection of UI engineering and cognitive psychology—ensuring every motion serves a singular strategic purpose.</p>
+            </div>
+        </section>
+
+        <div class="bento-grid">
+            <div class="bento-card wide reveal">
+                <h3>Our Philosophy</h3>
+                <p>Performance is not a feature; it is the foundation. We believe that a website should be as robust under the hood as it is beautiful on the surface.</p>
+            </div>
+            <div class="bento-card reveal">
+                <h3>The Studio</h3>
+                <p>Operating from Melbourne, AU. Available worldwide for projects that require a higher standard of digital craftsmanship.</p>
+            </div>
+            <div class="bento-card reveal">
+                <h3>Precision</h3>
+                <p>Pixel-perfect isn't a goal, it's our baseline. We obsess over the details so your users don't have to.</p>
+            </div>
+            <div class="bento-card wide reveal">
+                <h3>Strategy First</h3>
+                <p>We start with "Why." Before a single line of code is written, we define the narrative that will define your project's success.</p>
             </div>
         </div>
-    </section>
-
-    <div class="bento-grid">
-        <div class="bento-card wide reveal">
-            <h3 style="margin-bottom: 15px; font-size: 1.5rem; letter-spacing: -1px;">Precision Engineering</h3>
-            <p style="color: rgba(15,17,21,0.6); line-height: 1.6;">Infrastructure designed for conversion. We merge high-velocity code with pixel-perfect design standards to ensure your digital footprint is permanent.</p>
-        </div>
-        <div class="bento-card reveal">
-            <h3 style="margin-bottom: 15px; font-size: 1.5rem; letter-spacing: -1px;">Visual Narrative</h3>
-            <p style="color: rgba(15,17,21,0.6); line-height: 1.6;">Directing user focus through strategic hierarchy and intentional motion.</p>
-        </div>
-    </div>
+    </main>
 
     <footer>
         <div class="footer-grid">
@@ -223,25 +216,18 @@
             menuIcon.classList.toggle('is-active');
         });
 
-        window.addEventListener('load', () => { 
-            document.body.classList.add('loaded'); 
+        window.addEventListener('load', () => {
+            document.body.classList.add('loaded');
             setTimeout(() => {
-                const spans = document.querySelectorAll('.hero-title span');
-                spans.forEach((span, index) => {
-                    setTimeout(() => span.classList.add('animate-in'), index * 200);
+                document.querySelectorAll('.bento-card').forEach((card, i) => {
+                    setTimeout(() => card.classList.add('reveal'), i * 150);
                 });
-                setTimeout(() => document.querySelector('.hero-btns').classList.add('animate-in'), 600);
             }, 500);
         });
 
         window.addEventListener('scroll', () => {
-            const header = document.getElementById('header');
-            header.classList.toggle('active', window.scrollY > 50);
-            document.querySelectorAll('.reveal').forEach(el => {
-                const rect = el.getBoundingClientRect();
-                if (rect.top < window.innerHeight - 100) el.classList.add('active');
-            });
-        }, { passive: true });
+            document.getElementById('header').classList.toggle('active', window.scrollY > 50);
+        });
     </script>
 </body>
 </html>
