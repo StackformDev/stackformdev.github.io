@@ -7,6 +7,8 @@
     <title>STACKFORM - Web Engineering</title>
     <meta name="description" content="STACKFORM (stackformdev) crafts high-performance websites that command focus. We merge precision engineering with visual narrative to build scalable digital experiences.">
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -121,7 +123,7 @@
             opacity: 0; 
             filter: blur(20px); 
             transform: translateY(40px); 
-            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); /* Faster transition */
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
             will-change: transform, opacity, filter;
         }
 
@@ -133,7 +135,6 @@
 
         .hero-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--primary); display: block; }
         
-        /* Entrance triggers */
         .hero-title span.animate-in, .hero-btns.animate-in {
             opacity: 1;
             filter: blur(0);
@@ -260,44 +261,57 @@
         const navMenu = document.getElementById('nav-menu');
         const menuIcon = document.getElementById('menu-icon');
 
+        // MOBILE MENU LOGIC
         mobileToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('is-active');
+            const isActive = navMenu.classList.toggle('is-active');
             menuIcon.classList.toggle('is-active');
+            document.body.style.overflow = isActive ? 'hidden' : 'auto';
         });
 
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', () => {
                 navMenu.classList.remove('is-active');
                 menuIcon.classList.remove('is-active');
+                document.body.style.overflow = 'auto';
             });
         });
 
+        // INTERSECTION OBSERVER for Scroll Reveal
+        const observerOptions = { threshold: 0.15 };
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        // LOADING & HERO ANIMATIONS
         window.addEventListener('load', () => { 
             document.body.classList.add('loaded'); 
             
+            document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+
             setTimeout(() => {
                 const spans = document.querySelectorAll('.hero-title span');
                 spans.forEach((span, index) => {
                     setTimeout(() => {
                         requestAnimationFrame(() => span.classList.add('animate-in'));
-                    }, index * 120); // Faster stagger for text
+                    }, index * 120);
                 });
                 
-                // Trigger buttons significantly earlier
                 setTimeout(() => {
                     const btns = document.querySelector('.hero-btns');
                     if(btns) btns.classList.add('animate-in');
-                }, 300); // Only 300ms delay now
+                }, 300);
             }, 400);
         });
 
+        // HEADER SCROLL EFFECT
         window.addEventListener('scroll', () => {
             const header = document.getElementById('header');
             header.classList.toggle('active', window.scrollY > 50);
-            document.querySelectorAll('.reveal').forEach(el => {
-                const rect = el.getBoundingClientRect();
-                if (rect.top < window.innerHeight - 100) el.classList.add('active');
-            });
         }, { passive: true });
     </script>
 </body>

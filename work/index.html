@@ -3,7 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Portfolio - STACKFORM</title>
+    <title>Work - STACKFORM</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -77,6 +80,7 @@
             }
             .nav-menu.is-active { right: 0; }
             .nav-link { font-size: 1.5rem; }
+            .nav-menu .btn { width: fit-content !important; min-width: 200px; margin: 0 auto; text-align: center; }
         }
 
         /* --- BUTTONS --- */
@@ -84,13 +88,13 @@
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-primary:hover { background: var(--accent); transform: translateY(-5px); box-shadow: 0 12px 25px var(--ghost-shadow); }
 
-        /* --- PORTFOLIO CONTENT --- */
-        .portfolio-hero { padding: 220px 10% 80px; }
-        .portfolio-hero h1 { font-family: 'Montserrat'; font-size: clamp(3.5rem, 8vw, 7rem); line-height: 0.9; letter-spacing: -4px; text-transform: uppercase; }
+        /* --- WORK CONTENT --- */
+        .work-hero { padding: 220px 10% 80px; }
+        .work-hero h1 { font-family: 'Montserrat'; font-size: clamp(3.5rem, 8vw, 7rem); line-height: 0.9; letter-spacing: -4px; text-transform: uppercase; }
         
-        .portfolio-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 60px; padding: 0 10% 160px; }
+        .work-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 60px; padding: 0 10% 160px; }
         .project-card { text-decoration: none; color: inherit; opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
-        .project-card.reveal { opacity: 1; transform: translateY(0); }
+        .project-card.active { opacity: 1; transform: translateY(0); }
         .img-wrapper { width: 100%; aspect-ratio: 16/10; background: #f0f0f0; overflow: hidden; border-radius: var(--radius); margin-bottom: 25px; border: 1px solid rgba(0,0,0,0.05); }
         .project-img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(100%); transform: scale(1.05); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
         .project-card:hover .project-img { filter: grayscale(0%); transform: scale(1); }
@@ -114,7 +118,7 @@
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
         @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 900px) { .portfolio-grid { grid-template-columns: 1fr; gap: 40px; } .footer-grid { grid-template-columns: 1fr; gap: 40px; } }
+        @media (max-width: 900px) { .work-grid { grid-template-columns: 1fr; gap: 40px; } .footer-grid { grid-template-columns: 1fr; gap: 40px; } }
     </style>
 </head>
 <body>
@@ -123,25 +127,25 @@
     <div class="leak-container"><div class="leak leak-blue"></div><div class="leak leak-purple"></div></div>
 
     <header id="header">
-        <a href="index.html" class="logo">STACKFORM</a>
+        <a href="../" class="logo">STACKFORM</a>
         <div class="mobile-toggle" id="mobile-toggle">
             <div class="menu-icon" id="menu-icon"><span></span><span></span><span></span></div>
         </div>
         <nav class="nav-menu" id="nav-menu">
-            <a href="index.html" class="nav-link">Home</a>
-            <a href="portfolio.html" class="nav-link current">Work</a>
-            <a href="about.html" class="nav-link">About</a>
-            <a href="inquiry.html" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.7rem;">Get Started</a>
+            <a href="../" class="nav-link">Home</a>
+            <a href="./" class="nav-link current">Work</a>
+            <a href="../about/" class="nav-link">About</a>
+            <a href="../inquiry/" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.7rem;">Get Started</a>
         </nav>
     </header>
 
     <main>
-        <section class="portfolio-hero">
-            <h1>Selected <span style="color:var(--accent)">Projects.</span></h1>
+        <section class="work-hero">
+            <h1>Selected <span style="color:var(--accent)">Work.</span></h1>
         </section>
 
-        <div class="portfolio-grid">
-            <div class="project-card">
+        <div class="work-grid">
+            <div class="project-card active">
                 <div class="img-wrapper"><img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&q=80&w=1200" class="project-img" alt="Project"></div>
                 <h3>Nexus Core</h3>
                 <p>Web Engineering / 2026</p>
@@ -157,17 +161,17 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-brand">
-                <a href="index.html" class="logo">STACKFORM</a>
+                <a href="../" class="logo">STACKFORM</a>
                 <p style="color:rgba(255,255,255,0.4); font-size:0.9rem; line-height: 1.7; max-width: 300px; margin-top: 20px;">Digital studio crafting performance-driven interfaces for the next era of the web.</p>
                 <div class="status-pill" style="margin-top: 30px;"><div class="status-dot"></div>Available for Q1 2026 Projects</div>
             </div>
             <div class="footer-col">
                 <h4>Sitemap</h4>
                 <ul>
-                    <li><a href="portfolio.html">Work</a></li>
+                    <li><a href="./">Work</a></li>
                     <li><a href="#">Services</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="inquiry.html">Contact</a></li>
+                    <li><a href="../about/">About</a></li>
+                    <li><a href="../inquiry/">Contact</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -196,20 +200,31 @@
         const menuIcon = document.getElementById('menu-icon');
 
         mobileToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('is-active');
+            const isActive = navMenu.classList.toggle('is-active');
             menuIcon.classList.toggle('is-active');
+            document.body.style.overflow = isActive ? 'hidden' : 'auto';
         });
+
+        const observerOptions = { threshold: 0.1 };
+        const revealObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
 
         window.addEventListener('load', () => {
             document.body.classList.add('loaded');
-            document.querySelectorAll('.project-card').forEach((card, i) => {
-                setTimeout(() => card.classList.add('reveal'), 400 + (i * 150));
+            document.querySelectorAll('.project-card').forEach(card => {
+                revealObserver.observe(card);
             });
         });
 
         window.addEventListener('scroll', () => {
             document.getElementById('header').classList.toggle('active', window.scrollY > 50);
-        });
+        }, { passive: true });
     </script>
 </body>
 </html>
