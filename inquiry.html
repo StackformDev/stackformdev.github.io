@@ -11,6 +11,7 @@
         :root {
             --primary: #0F1115; 
             --accent: #2F6BFF;  
+            --success: rgba(0, 255, 136, 0.8);
             --bg: #050505;
             --grid-line: rgba(255, 255, 255, 0.03); 
             --radius: 12px;
@@ -22,7 +23,7 @@
             background-color: var(--bg); 
             color: #fff; 
             font-family: 'Inter', sans-serif; 
-            overflow-x: hidden;
+            overflow: hidden;
             min-height: 100vh;
             display: flex;
             align-items: center;
@@ -35,10 +36,8 @@
 
         #grid-overlay {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
             z-index: -1;
             pointer-events: none;
         }
@@ -75,43 +74,54 @@
 
         .close-btn { position: absolute; top: 20px; right: 24px; text-decoration: none; color: rgba(255,255,255,0.3); font-size: 0.6rem; font-weight: 800; letter-spacing: 2px; }
         h2 { font-family: 'Montserrat'; font-size: 2.2rem; letter-spacing: -1.5px; margin-bottom: 25px; line-height: 1; }
-        .field-group { margin-bottom: 15px; }
-        .field { width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1); padding: 18px; border-radius: var(--radius); color: #fff; font-size: 0.95rem; transition: 0.3s; font-family: 'Inter', sans-serif; }
+        
+        .field { width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1); padding: 18px; border-radius: var(--radius); color: #fff; font-size: 0.95rem; transition: 0.3s; margin-bottom: 15px; }
         .field:focus { outline: none; border-color: var(--accent); background: rgba(255, 255, 255, 0.07); }
         
-        /* --- UPDATED SERVICE BUTTONS WITH GLOW --- */
-        .service-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
-        
+        .service-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 15px; }
         .service-btn { 
-            padding: 12px 5px; 
-            background: rgba(255,255,255,0.05); 
-            border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 50px; 
-            font-size: 0.65rem; 
-            font-weight: 700; 
-            color: rgba(255,255,255,0.4); 
-            text-align: center; 
-            cursor: pointer;
-            /* Smooth transition for background, color, and shadow */
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            position: relative;
-            overflow: hidden;
+            padding: 12px 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 50px; font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.4); 
+            text-align: center; cursor: pointer; transition: all 0.3s ease;
         }
-
         .service-btn.active { 
-            background: var(--accent); 
-            color: #fff; 
-            border-color: var(--accent); 
-            /* Subtle blue glow */
-            box-shadow: 0 0 15px rgba(47, 107, 255, 0.4);
-            transform: translateY(-1px);
+            background: var(--accent); color: #fff; border-color: var(--accent); 
+            box-shadow: 0 0 15px rgba(47, 107, 255, 0.3); 
         }
 
-        .submit-btn { width: 100%; padding: 20px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); font-weight: 800; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
-        .submit-btn:hover { filter: brightness(1.1); box-shadow: 0 0 20px rgba(47, 107, 255, 0.3); }
+        /* --- THE GHOST BUTTON (OUTLINE TO SOLID) --- */
+        .submit-btn { 
+            width: 100%; padding: 20px; background: transparent; color: #fff; 
+            border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius); font-weight: 800; 
+            text-transform: uppercase; cursor: pointer; transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            letter-spacing: 1px;
+        }
+        .submit-btn:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+            box-shadow: 0 0 20px rgba(47, 107, 255, 0.3);
+        }
+
+        /* --- SUCCESS STATE --- */
+        #successNote { display: none; text-align: center; padding: 20px 0; }
+        
+        .check-circle {
+            width: 60px; height: 60px; 
+            border: 1px solid var(--success); 
+            border-radius: 50%; 
+            display: flex; align-items: center; justify-content: center; 
+            margin: 0 auto 25px; 
+            color: var(--success); 
+            font-size: 1.5rem;
+            box-shadow: 0 0 15px rgba(0, 255, 136, 0.15); 
+        }
+
+        #successNote h2 { margin-bottom: 12px; }
+        #successNote .desc { color: rgba(255,255,255,0.5); font-size: 0.9rem; margin-bottom: 8px; line-height: 1.6; }
+        #successNote .sub-desc { color: rgba(255,255,255,0.25); font-size: 0.7rem; font-weight: 600; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 35px; }
 
         @media (min-width: 768px) {
-            .intake-container { padding: 50px; width: 90%; margin: 40px 0; }
+            .intake-container { padding: 50px; width: 90%; }
             h2 { font-size: 2.8rem; }
             .service-row { grid-template-columns: repeat(4, 1fr); }
             .field { padding: 22px; }
@@ -124,29 +134,35 @@
 
     <div class="intake-container" id="intakeBox">
         <a href="index.html" class="close-btn">ESC / CLOSE</a>
+        
         <div id="formContent">
             <h2>Initialize Project.</h2>
             <form id="projectForm">
-                <input type="hidden" name="_subject" value="New Project Request | STACKFORM">
-                <div class="field-group"><input type="text" name="name" class="field" placeholder="FULL NAME" required></div>
-                <div class="field-group"><input type="email" name="email" class="field" placeholder="EMAIL ADDRESS" required></div>
-                <div class="field-group" style="display: flex; gap: 8px;">
-                    <div style="width: 80px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem;">🇦🇺 +61</div>
-                    <input type="tel" name="phone" class="field" placeholder="PHONE NUMBER" required pattern="[0-9]{9,10}">
+                <input type="text" name="name" class="field" placeholder="FULL NAME" required>
+                <input type="email" name="email" class="field" placeholder="EMAIL ADDRESS" required>
+                <div style="display: flex; gap: 8px; margin-bottom: 15px;">
+                    <div style="width: 80px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: rgba(255,255,255,0.5);">🇦🇺 +61</div>
+                    <input type="tel" name="phone" class="field" style="margin-bottom:0;" placeholder="PHONE NUMBER" required pattern="[0-9]{9,10}">
                 </div>
-                <div class="field-group">
-                    <p style="font-size:0.55rem; letter-spacing:2px; color:rgba(255,255,255,0.4); margin-bottom:10px; font-weight:800; text-transform:uppercase;">Select Service</p>
-                    <div class="service-row">
-                        <div class="service-btn" onclick="selectService('Web Design', this)">Web Design</div>
-                        <div class="service-btn" onclick="selectService('UI/UX', this)">UI/UX</div>
-                        <div class="service-btn" onclick="selectService('E-Commerce', this)">E-Commerce</div>
-                        <div class="service-btn" onclick="selectService('Branding', this)">Branding</div>
-                    </div>
-                    <input type="hidden" name="service" id="serviceInput" required>
+                <p style="font-size:0.55rem; letter-spacing:2px; color:rgba(255,255,255,0.3); margin-bottom:10px; font-weight:800; text-transform:uppercase;">Select Service</p>
+                <div class="service-row">
+                    <div class="service-btn" onclick="selectService('Web Design', this)">Web Design</div>
+                    <div class="service-btn" onclick="selectService('UI/UX', this)">UI/UX</div>
+                    <div class="service-btn" onclick="selectService('E-Commerce', this)">E-Commerce</div>
+                    <div class="service-btn" onclick="selectService('Branding', this)">Branding</div>
                 </div>
-                <div class="field-group"><textarea name="message" class="field" placeholder="Tell us about your project goals..." required style="min-height: 100px; resize: none;"></textarea></div>
-                <button type="submit" id="submitBtn" class="submit-btn">Submit Request</button>
+                <input type="hidden" name="service" id="serviceInput" required>
+                <textarea name="message" class="field" placeholder="Project goals..." required style="min-height: 100px; resize: none;"></textarea>
+                <button type="submit" id="submitBtn" class="submit-btn">Submit Project Request</button>
             </form>
+        </div>
+
+        <div id="successNote">
+            <div class="check-circle">✓</div>
+            <h2>Transmission Received.</h2>
+            <p class="desc">Your inquiry has been successfully encrypted and routed to our design lead.</p>
+            <p class="sub-desc">Expected response time: <span style="color:var(--success)">24 Hours</span></p>
+            <a href="index.html" class="submit-btn" style="text-decoration:none; display:inline-block; width: auto; padding: 18px 45px; font-size: 0.75rem;">Return to Terminal</a>
         </div>
     </div>
 
@@ -159,7 +175,6 @@
             line.setAttribute('x1', x1); line.setAttribute('y1', y1);
             line.setAttribute('x2', x2); line.setAttribute('y2', y2);
             line.classList.add('grid-line');
-            
             const len = Math.sqrt(Math.pow(x2-x1, 2) + Math.pow(y2-y1, 2));
             line.style.strokeDasharray = len;
             line.style.strokeDashoffset = len;
@@ -171,7 +186,6 @@
             const w = window.innerWidth;
             const h = window.innerHeight;
             const gap = w < 768 ? 50 : 60; 
-            
             gridSvg.setAttribute('viewBox', `0 0 ${w} ${h}`);
             document.body.classList.add('loaded');
 
@@ -181,43 +195,51 @@
             const hLines = Math.floor(h / gap);
             for (let i = 0; i <= hLines; i++) {
                 const y = i * gap;
-                const distFromEdge = Math.min(i, hLines - i);
-                const delay = distFromEdge * staggerStep;
+                const dist = Math.min(i, hLines - i);
+                const delay = dist * staggerStep;
                 if (delay > maxDelay) maxDelay = delay;
-                addLine(0, y, w/2, y, delay); 
-                addLine(w, y, w/2, y, delay); 
+                addLine(0, y, w/2, y, delay); addLine(w, y, w/2, y, delay); 
             }
 
             const vLines = Math.floor(w / gap);
             for (let i = 0; i <= vLines; i++) {
                 const x = i * gap;
-                const distFromEdge = Math.min(i, vLines - i);
-                const delay = distFromEdge * staggerStep;
+                const dist = Math.min(i, vLines - i);
+                const delay = dist * staggerStep;
                 if (delay > maxDelay) maxDelay = delay;
-                addLine(x, 0, x, h/2, delay); 
-                addLine(x, h, x, h/2, delay); 
+                addLine(x, 0, x, h/2, delay); addLine(x, h, x, h/2, delay); 
             }
 
-            requestAnimationFrame(() => {
-                setTimeout(() => {
-                    document.querySelectorAll('.grid-line').forEach(l => l.style.strokeDashoffset = '0');
-                }, 200);
-            });
-
             setTimeout(() => {
-                box.classList.add('animate-in');
-            }, maxDelay + 300);
+                document.querySelectorAll('.grid-line').forEach(l => l.style.strokeDashoffset = '0');
+            }, 200);
+
+            setTimeout(() => { box.classList.add('animate-in'); }, maxDelay + 300);
         }
 
         window.addEventListener('load', createGrid);
 
-        function selectService(value, element) {
-            document.getElementById('serviceInput').value = value;
-            document.querySelectorAll('.service-btn').forEach(item => {
-                item.classList.remove('active');
-            });
-            element.classList.add('active');
+        function selectService(val, el) {
+            document.getElementById('serviceInput').value = val;
+            document.querySelectorAll('.service-btn').forEach(b => b.classList.remove('active'));
+            el.classList.add('active');
         }
+
+        document.getElementById('projectForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const btn = document.getElementById('submitBtn');
+            btn.innerText = "TRANSMITTING...";
+            
+            fetch("https://formsubmit.co/ajax/stackformdev@gmail.com", {
+                method: "POST",
+                body: new FormData(this),
+                headers: { 'Accept': 'application/json' }
+            })
+            .then(() => {
+                document.getElementById('formContent').style.display = "none";
+                document.getElementById('successNote').style.display = "block";
+            });
+        });
     </script>
 </body>
 </html>
