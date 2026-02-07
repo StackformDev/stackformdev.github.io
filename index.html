@@ -80,7 +80,6 @@
             .nav-menu.is-active { right: 0; }
             .nav-link { font-size: 1.5rem; }
             
-            /* FIXED MOBILE BUTTON */
             .nav-menu .btn { 
                 width: fit-content !important; 
                 min-width: 200px; 
@@ -90,13 +89,30 @@
         }
 
         /* --- BUTTONS --- */
-        .btn { display: inline-block; padding: 18px 36px; border-radius: var(--radius); font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; border: none; position: relative; }
+        .btn { 
+            display: inline-block; padding: 18px 36px; border-radius: var(--radius); 
+            font-weight: 800; font-size: 0.75rem; cursor: pointer; 
+            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
+            text-decoration: none; text-transform: uppercase; letter-spacing: 1px; 
+            border: none; position: relative;
+        }
         .btn-primary { background: var(--primary); color: #fff; }
-        .btn-primary:hover { background: var(--accent); transform: translateY(-5px); box-shadow: 0 12px 25px var(--ghost-shadow); }
-        .btn-secondary { background: transparent; color: var(--primary); border: 1px solid rgba(15, 17, 21, 0.2); margin-left: 12px; }
-        .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-5px); }
+        .btn-primary:hover { 
+            background: var(--accent); transform: translateY(-5px); 
+            box-shadow: 0 12px 25px var(--ghost-shadow); 
+            z-index: 2; 
+        }
+        .btn-secondary { 
+            background: transparent; color: var(--primary); 
+            border: 1px solid rgba(15, 17, 21, 0.2); 
+        }
+        .btn-secondary:hover { 
+            border-color: var(--accent); color: var(--accent); 
+            transform: translateY(-5px); 
+            z-index: 2; 
+        }
 
-        /* --- HERO & SMOOTH ENTRANCE --- */
+        /* --- HERO & ENTRANCE --- */
         .hero { height: 100vh; display: flex; align-items: center; padding: 0 15%; }
         .hero-title { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: clamp(3.5rem, 8.5vw, 7.5rem); line-height: 0.95; letter-spacing: -0.05em; margin-bottom: 45px; }
         
@@ -105,8 +121,14 @@
             opacity: 0; 
             filter: blur(20px); 
             transform: translateY(40px); 
-            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); /* Faster transition */
             will-change: transform, opacity, filter;
+        }
+
+        .hero-btns { 
+            display: flex; 
+            gap: 24px; 
+            align-items: center; 
         }
 
         .hero-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--primary); display: block; }
@@ -117,12 +139,10 @@
             filter: blur(0);
             transform: translateY(0);
         }
-        .hero-btns.animate-in { transition-delay: 0.7s; }
 
         @media (max-width: 768px) {
             .hero { padding: 0 5%; }
             .hero-btns { flex-direction: column; gap: 15px; width: 100%; align-items: flex-start; }
-            .btn-secondary { margin-left: 0; }
             .btn { width: 100%; text-align: center; }
         }
 
@@ -245,7 +265,6 @@
             menuIcon.classList.toggle('is-active');
         });
 
-        // Closing menu on link click
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', () => {
                 navMenu.classList.remove('is-active');
@@ -256,19 +275,19 @@
         window.addEventListener('load', () => { 
             document.body.classList.add('loaded'); 
             
-            // Wait for shutter to start clearing
             setTimeout(() => {
                 const spans = document.querySelectorAll('.hero-title span');
                 spans.forEach((span, index) => {
                     setTimeout(() => {
                         requestAnimationFrame(() => span.classList.add('animate-in'));
-                    }, index * 180);
+                    }, index * 120); // Faster stagger for text
                 });
                 
+                // Trigger buttons significantly earlier
                 setTimeout(() => {
                     const btns = document.querySelector('.hero-btns');
                     if(btns) btns.classList.add('animate-in');
-                }, 600);
+                }, 300); // Only 300ms delay now
             }, 400);
         });
 
