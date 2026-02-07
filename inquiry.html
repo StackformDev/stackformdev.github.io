@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inquiry - STACKFORM</title>
+    <meta name="google-site-verification" content="THTrCrHzMRlBgni9F-QEF9iwuMUwRd85f-OchFK5PJs" />
+    <title>Initialize Project | STACKFORM</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
     
     <style>
@@ -11,111 +12,127 @@
             --primary: #0F1115; 
             --accent: #2F6BFF;  
             --bg: #050505;
-            --grid-line-dark: rgba(255, 255, 255, 0.03);
+            --grid-line: rgba(255, 255, 255, 0.03);
+            --radius: 12px;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body { 
             background-color: var(--bg); 
             color: #fff; 
             font-family: 'Inter', sans-serif; 
+            overflow-x: hidden;
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow-x: hidden;
         }
 
-        .intake-grid-bg { 
-            position: fixed; inset: 0; z-index: -1; 
-            background-image: linear-gradient(var(--grid-line-dark) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line-dark) 1px, transparent 1px); 
-            background-size: 60px 60px; 
-            pointer-events: none; 
+        /* --- BACKGROUND GRID --- */
+        body::before {
+            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
+            background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
+            background-size: 60px 60px;
         }
 
+        /* --- SMOOTH ENTRANCE --- */
         .intake-container { 
             max-width: 700px; 
             width: 90%; 
-            min-height: 480px; 
-            margin: 60px auto; 
-            padding: 45px; 
+            padding: 50px; 
             background: rgba(255, 255, 255, 0.02); 
             border: 1px solid rgba(255, 255, 255, 0.08); 
             border-radius: 32px; 
-            backdrop-filter: blur(40px); 
-            -webkit-backdrop-filter: blur(40px);
-            position: relative; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
+            backdrop-filter: blur(40px);
+            position: relative;
+            margin: 40px 0;
+            
+            /* Initial Hidden State */
+            opacity: 0;
+            filter: blur(20px);
+            transform: translateY(40px);
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, opacity, filter;
         }
 
-        .close-intake-x { 
-            position: absolute; top: 25px; right: 25px; cursor: pointer; 
-            font-size: 0.7rem; font-weight: 800; color: rgba(255,255,255,0.3); 
-            transition: 0.3s; padding: 10px; letter-spacing: 2px; text-decoration: none;
+        .intake-container.animate-in {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateY(0);
         }
-        .close-intake-x:hover { color: var(--accent); }
 
+        .close-btn {
+            position: absolute; top: 30px; right: 30px;
+            text-decoration: none; color: rgba(255,255,255,0.3);
+            font-size: 0.7rem; font-weight: 800; letter-spacing: 2px;
+            transition: 0.3s;
+        }
+        .close-btn:hover { color: var(--accent); }
+
+        h2 { font-family: 'Montserrat'; font-size: 2.8rem; letter-spacing: -2px; margin-bottom: 30px; }
+
+        /* --- FORM ELEMENTS --- */
+        .field-group { margin-bottom: 20px; }
         .field { 
-            width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1); 
-            padding: 22px; border-radius: 12px; color: #fff; font-size: 1rem; 
+            width: 100%; background: rgba(255, 255, 255, 0.03); 
+            border: 1px solid rgba(255,255,255,0.1); padding: 22px; 
+            border-radius: var(--radius); color: #fff; font-size: 1rem; 
             transition: 0.3s; font-family: 'Inter', sans-serif; 
         }
         .field:focus { outline: none; border-color: var(--accent); background: rgba(255, 255, 255, 0.07); }
+        
         textarea.field { min-height: 120px; resize: none; }
 
         .service-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin-top: 10px; }
         .service-btn { 
-            padding: 14px 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); 
-            border-radius: 50px; font-size: 0.75rem; font-weight: 700; color: rgba(255,255,255,0.4); 
-            text-align: center; cursor: pointer; transition: 0.3s; white-space: nowrap; 
-            overflow: hidden; text-overflow: ellipsis; 
+            padding: 14px 5px; background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; 
+            font-size: 0.7rem; font-weight: 700; color: rgba(255,255,255,0.4); 
+            text-align: center; cursor: pointer; transition: 0.3s; 
+            white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
         }
-        .service-btn:hover { color: #fff; background: rgba(255,255,255,0.1); }
         .service-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
 
-        .btn-primary { 
-            width:100%; padding:22px; background:var(--accent); 
-            border: none; border-radius: 8px; color: #fff; 
-            font-weight: 800; font-size: 0.75rem; cursor: pointer; 
-            transition: 0.4s; text-transform: uppercase; letter-spacing: 1px;
+        .submit-btn { 
+            width: 100%; padding: 22px; background: var(--accent); 
+            color: #fff; border: none; border-radius: var(--radius); 
+            font-weight: 800; text-transform: uppercase; letter-spacing: 1px; 
+            cursor: pointer; transition: 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            margin-top: 10px;
         }
-        .btn-primary:hover { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(47, 107, 255, 0.25); }
+        .submit-btn:hover { transform: translateY(-5px); box-shadow: 0 15px 30px rgba(47, 107, 255, 0.3); }
 
-        @media (max-width: 768px) { 
-            .service-row { grid-template-columns: 1fr 1fr; gap: 8px; } 
-            .intake-container { padding: 30px 20px; } 
+        @media (max-width: 768px) {
+            .intake-container { padding: 40px 20px; }
+            h2 { font-size: 2rem; }
+            .service-row { grid-template-columns: 1fr 1fr; }
         }
     </style>
 </head>
 <body>
 
-    <div class="intake-grid-bg"></div>
-
-    <div class="intake-container">
-        <a href="index.html" class="close-intake-x">ESC / CLOSE</a>
+    <div class="intake-container" id="intakeBox">
+        <a href="index.html" class="close-btn">ESC / CLOSE</a>
         
         <div id="formContent">
-            <h2 style="font-family:'Montserrat'; font-size:2.8rem; letter-spacing:-2px; margin-bottom:30px;">Initialize Project.</h2>
+            <h2>Initialize Project.</h2>
             <form id="projectForm">
                 <input type="hidden" name="_subject" value="New Project Request | STACKFORM">
                 <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_template" value="table">
 
-                <div style="margin-bottom:20px;">
-                    <input type="text" name="name" class="field" placeholder="FULL NAME" required>
+                <div class="field-group">
+                    <input type="text" name="name" class="field" placeholder="FULL NAME" required minlength="2">
                 </div>
-                <div style="margin-bottom:20px;">
+                <div class="field-group">
                     <input type="email" name="email" class="field" placeholder="EMAIL ADDRESS" required>
                 </div>
-                <div style="margin-bottom:20px; display: flex; gap: 10px;">
-                    <div style="width: 100px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700;">🇦🇺 +61</div>
-                    <input type="tel" name="phone" class="field" style="margin-bottom:0;" placeholder="PHONE NUMBER" required>
-                </div>
 
-                <div style="margin-bottom:30px;">
+                <div class="field-group" style="display: flex; gap: 10px;">
+                    <div style="width: 100px; background: rgba(255,255,255,0.08); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem;">🇦🇺 +61</div>
+                    <input type="tel" name="phone" class="field" placeholder="PHONE NUMBER" required pattern="[0-9]{9,10}">
+                </div>
+                
+                <div class="field-group">
                     <p style="font-size:0.6rem; letter-spacing:2px; color:rgba(255,255,255,0.4); margin-bottom:12px; font-weight:800; text-transform:uppercase;">Select Service</p>
                     <div class="service-row">
                         <div class="service-btn" onclick="selectService('Web Design', this)">Web Design</div>
@@ -126,52 +143,58 @@
                     <input type="hidden" name="service" id="serviceInput" required>
                 </div>
 
-                <div style="margin-bottom:30px;">
-                    <p style="font-size:0.6rem; letter-spacing:2px; color:rgba(255,255,255,0.4); margin-bottom:12px; font-weight:800; text-transform:uppercase;">Project Details</p>
-                    <textarea name="message" class="field" placeholder="Tell us about your project goals..." required></textarea>
+                <div class="field-group">
+                    <textarea name="message" class="field" placeholder="Tell us about your project goals..." required minlength="10"></textarea>
                 </div>
-
-                <button type="submit" id="submitBtn" class="btn-primary">Submit Project Request</button>
+                
+                <button type="submit" id="submitBtn" class="submit-btn">Submit Project Request</button>
             </form>
         </div>
 
         <div id="successNote" style="display: none; text-align: center;">
-            <div style="width: 60px; height: 60px; border: 2px solid #00ff88; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; color: #00ff88; font-size: 1.5rem; box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);">✓</div>
-            <h2 style="font-family:'Montserrat'; font-size:2.5rem; letter-spacing:-2px; margin-bottom:15px;">Transmission Received.</h2>
-            <p style="color:rgba(255,255,255,0.5); font-size:0.9rem; line-height:1.6; max-width:400px; margin:0 auto 40px;">Your project parameters have been logged. Our engineering team will review the brief and contact you within 24 hours.</p>
-            <a href="index.html" class="btn-primary" style="text-decoration: none; display: inline-block; width: auto; padding: 18px 40px; background: transparent; border: 1px solid rgba(255,255,255,0.2);">Back to Studio</a>
+            <div style="width: 60px; height: 60px; border: 2px solid #00ff88; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 30px; color: #00ff88; font-size: 1.5rem;">✓</div>
+            <h2 style="font-size: 2.2rem;">Transmission Received.</h2>
+            <p style="color:rgba(255,255,255,0.5); margin-bottom: 40px; line-height: 1.6;">Our engineering team will review the brief and contact you within 24 hours.</p>
+            <a href="index.html" class="submit-btn" style="text-decoration:none; display:inline-block;">Back to Studio</a>
         </div>
     </div>
 
     <script>
+        // Entrance Animation
+        window.addEventListener('load', () => {
+            const box = document.getElementById('intakeBox');
+            setTimeout(() => {
+                requestAnimationFrame(() => {
+                    box.classList.add('animate-in');
+                });
+            }, 150);
+        });
+
         function selectService(value, element) {
             document.getElementById('serviceInput').value = value;
             document.querySelectorAll('.service-btn').forEach(item => item.classList.remove('active'));
             element.classList.add('active');
         }
 
+        // Real Submission Logic
         document.getElementById('projectForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const btn = document.getElementById('submitBtn');
             btn.innerText = "INITIALIZING TRANSMISSION...";
-
-            const formData = new FormData(this);
             
+            const formData = new FormData(this);
             fetch("https://formsubmit.co/ajax/stackformdev@gmail.com", {
                 method: "POST",
                 body: formData,
                 headers: { 'Accept': 'application/json' }
             })
-            .then(response => {
-                if (response.ok) {
-                    document.getElementById('formContent').style.display = "none";
-                    document.getElementById('successNote').style.display = "block";
-                    document.getElementById('successNote').style.opacity = "1";
-                }
+            .then(() => {
+                document.getElementById('formContent').style.display = "none";
+                document.getElementById('successNote').style.display = "block";
             })
             .catch(error => {
                 btn.innerText = "ERROR - TRY AGAIN";
-                console.log(error);
+                console.error(error);
             });
         });
     </script>

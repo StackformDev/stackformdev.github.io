@@ -62,7 +62,7 @@
         .nav-link::after { content: ''; position: absolute; bottom: -2px; height: 3px; width: 0; background-color: var(--accent); right: 0; transition: width 0.4s ease; }
         .nav-link:hover::after, .nav-link.current::after { width: 100%; left: 0; }
 
-        /* --- MOBILE MENU --- */
+        /* --- MOBILE TOGGLE --- */
         .mobile-toggle { display: none; cursor: pointer; z-index: 1100; width: 44px; height: 44px; align-items: center; justify-content: center; }
         .menu-icon { width: 26px; height: 16px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
         .menu-icon span { display: block; width: 100%; height: 2px; background-color: var(--primary); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); transform-origin: center; }
@@ -88,19 +88,33 @@
         .btn-secondary { background: transparent; color: var(--primary); border: 1px solid rgba(15, 17, 21, 0.2); margin-left: 12px; }
         .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-5px); }
 
-        /* --- HERO --- */
+        /* --- HERO & SMOOTH ENTRANCE --- */
         .hero { height: 100vh; display: flex; align-items: center; padding: 0 15%; }
         .hero-title { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: clamp(3.5rem, 8.5vw, 7.5rem); line-height: 0.95; letter-spacing: -0.05em; margin-bottom: 45px; }
-        .hero-title span { display: block; opacity: 0; filter: blur(12px); transform: translateY(40px); }
-        .hero-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--primary); }
-        .hero-btns { opacity: 0; filter: blur(8px); transform: translateY(20px); display: flex; align-items: center; }
-        .animate-in { animation: linearEntrance 1s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes linearEntrance { to { opacity: 1; filter: blur(0); transform: translateY(0); } }
+        
+        .hero-title span, .hero-btns { 
+            display: block; 
+            opacity: 0; 
+            filter: blur(20px); 
+            transform: translateY(40px); 
+            transition: all 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+            will-change: transform, opacity, filter;
+        }
+
+        .hero-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--primary); display: block; }
+        
+        /* Entrance triggers */
+        .hero-title span.animate-in, .hero-btns.animate-in {
+            opacity: 1;
+            filter: blur(0);
+            transform: translateY(0);
+        }
+        .hero-btns.animate-in { transition-delay: 0.7s; }
 
         @media (max-width: 768px) {
             .hero { padding: 0 5%; }
             .hero-btns { flex-direction: column; gap: 15px; width: 100%; align-items: flex-start; }
-            .btn-secondary { margin-left: 0; width: 100%; text-align: center; }
+            .btn-secondary { margin-left: 0; }
             .btn { width: 100%; text-align: center; }
         }
 
@@ -223,15 +237,31 @@
             menuIcon.classList.toggle('is-active');
         });
 
+        // Closing menu on link click
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                navMenu.classList.remove('is-active');
+                menuIcon.classList.remove('is-active');
+            });
+        });
+
         window.addEventListener('load', () => { 
             document.body.classList.add('loaded'); 
+            
+            // Wait for shutter to start clearing
             setTimeout(() => {
                 const spans = document.querySelectorAll('.hero-title span');
                 spans.forEach((span, index) => {
-                    setTimeout(() => span.classList.add('animate-in'), index * 200);
+                    setTimeout(() => {
+                        requestAnimationFrame(() => span.classList.add('animate-in'));
+                    }, index * 180);
                 });
-                setTimeout(() => document.querySelector('.hero-btns').classList.add('animate-in'), 600);
-            }, 500);
+                
+                setTimeout(() => {
+                    const btns = document.querySelector('.hero-btns');
+                    if(btns) btns.classList.add('animate-in');
+                }, 600);
+            }, 400);
         });
 
         window.addEventListener('scroll', () => {
