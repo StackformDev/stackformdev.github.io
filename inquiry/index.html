@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Initialize Project | STACKFORM</title>
-    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
@@ -45,7 +44,7 @@
         .intake-container.animate-in { opacity: 1; filter: blur(0); transform: translateY(0); }
         .close-btn { position: absolute; top: 20px; right: 24px; text-decoration: none; color: rgba(255,255,255,0.3); font-size: 0.6rem; font-weight: 800; letter-spacing: 2px; cursor: pointer; }
         
-        h2 { font-family: 'Montserrat'; font-size: 2.2rem; letter-spacing: -1px; margin-bottom: 25px; line-height: 1; }
+        h2 { font-family: 'Montserrat'; font-size: 2.2rem; letter-spacing: -1.5px; margin-bottom: 25px; line-height: 1; }
         
         .field-wrap { position: relative; margin-bottom: 15px; width: 100%; }
         
@@ -158,10 +157,10 @@
         const gridSvg = document.getElementById('grid-overlay');
         const box = document.getElementById('intakeBox');
         
-        // Corrected link to homepage (up one level)
+        // REDIRECTS TO PARENT DIRECTORY ROOT (Removes index.html from URL)
         function closePage() { 
             document.body.classList.add('fading-out'); 
-            setTimeout(() => { window.location.href = '../index.html'; }, 800); 
+            setTimeout(() => { window.location.href = '../'; }, 800); 
         }
         
         window.addEventListener('keydown', (e) => { if (e.key === "Escape") closePage(); });
