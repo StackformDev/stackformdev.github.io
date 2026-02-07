@@ -58,7 +58,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08); 
             border-radius: 24px; 
             backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px); /* Safari support */
+            -webkit-backdrop-filter: blur(40px);
             position: relative;
             margin: 20px 0;
             opacity: 0;
@@ -79,10 +79,36 @@
         .field { width: 100%; background: rgba(255, 255, 255, 0.03); border: 1px solid rgba(255,255,255,0.1); padding: 18px; border-radius: var(--radius); color: #fff; font-size: 0.95rem; transition: 0.3s; font-family: 'Inter', sans-serif; }
         .field:focus { outline: none; border-color: var(--accent); background: rgba(255, 255, 255, 0.07); }
         
+        /* --- UPDATED SERVICE BUTTONS WITH GLOW --- */
         .service-row { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-top: 10px; }
-        .service-btn { padding: 12px 5px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 50px; font-size: 0.65rem; font-weight: 700; color: rgba(255,255,255,0.4); text-align: center; cursor: pointer; }
-        .service-btn.active { background: var(--accent); color: #fff; border-color: var(--accent); }
-        .submit-btn { width: 100%; padding: 20px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); font-weight: 800; text-transform: uppercase; margin-top: 10px; }
+        
+        .service-btn { 
+            padding: 12px 5px; 
+            background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 50px; 
+            font-size: 0.65rem; 
+            font-weight: 700; 
+            color: rgba(255,255,255,0.4); 
+            text-align: center; 
+            cursor: pointer;
+            /* Smooth transition for background, color, and shadow */
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-btn.active { 
+            background: var(--accent); 
+            color: #fff; 
+            border-color: var(--accent); 
+            /* Subtle blue glow */
+            box-shadow: 0 0 15px rgba(47, 107, 255, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .submit-btn { width: 100%; padding: 20px; background: var(--accent); color: #fff; border: none; border-radius: var(--radius); font-weight: 800; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
+        .submit-btn:hover { filter: brightness(1.1); box-shadow: 0 0 20px rgba(47, 107, 255, 0.3); }
 
         @media (min-width: 768px) {
             .intake-container { padding: 50px; width: 90%; margin: 40px 0; }
@@ -144,14 +170,13 @@
         function createGrid() {
             const w = window.innerWidth;
             const h = window.innerHeight;
-            // Adaptive gap: smaller screens get slightly fewer lines for better performance
             const gap = w < 768 ? 50 : 60; 
             
             gridSvg.setAttribute('viewBox', `0 0 ${w} ${h}`);
             document.body.classList.add('loaded');
 
             let maxDelay = 0;
-            const staggerStep = w < 768 ? 60 : 100; // Faster stagger on mobile
+            const staggerStep = w < 768 ? 60 : 100;
 
             const hLines = Math.floor(h / gap);
             for (let i = 0; i <= hLines; i++) {
@@ -188,7 +213,9 @@
 
         function selectService(value, element) {
             document.getElementById('serviceInput').value = value;
-            document.querySelectorAll('.service-btn').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.service-btn').forEach(item => {
+                item.classList.remove('active');
+            });
             element.classList.add('active');
         }
     </script>
