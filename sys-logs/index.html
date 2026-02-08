@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVR_CORE // TERMINAL</title>
+    
+    <script>
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('key') !== '3478') {
+                // Instantly kill the page render
+                document.documentElement.style.display = 'none';
+                // Jump out of the folder to find the 404 in root
+                window.location.replace('../404.html');
+            }
+        })();
+    </script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;600;700;800&family=JetBrains+Mono&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
+    
+    <style>
+        :root {
+            --bg: #050505;
+            --card-bg: #0A0A0A;
+            --accent: #2F6BFF;
+            --border: rgba(255, 255, 255, 0.05);
+            --text-main: #FFFFFF;
+            --text-dim: rgba(255, 255, 255, 0.4);
+            --radius: 12px;
+            --grid-line: rgba(255, 255, 255, 0.015);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            background: var(--bg); 
+            color: var(--text-main); 
+            font-family: 'Inter', sans-serif; 
+            display: flex; 
+            min-height: 100vh;
+        }
+
+        /* --- SIDEBAR --- */
+        aside {
+            width: 260px;
+            border-right: 1px solid var(--border);
+            padding: 40px 20px;
+            display: flex;
+            flex-direction: column;
+            background: rgba(5, 5, 5, 0.8);
+            backdrop-filter: blur(20px);
+            position: sticky;
+            top: 0;
+            height: 100vh;
+        }
+
+        .admin-logo {
+            font-family: 'Montserrat';
+            font-weight: 900;
+            font-size: 1.2rem;
+            letter-spacing: -1px;
+            margin-bottom: 50px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-group { margin-bottom: 30px; }
+        .nav-label { font-size: 0.6rem; text-transform: uppercase; letter-spacing: 2px; color: var(--text-dim); margin-bottom: 15px; display: block; font-weight: 800; }
+        
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            border-radius: var(--radius);
+            margin-bottom: 5px;
+            transition: 0.3s;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: #fff;
+        }
+
+        .nav-item.active { border-left: 3px solid var(--accent); }
+
+        /* --- MAIN CONTENT --- */
+        main { flex: 1; padding: 40px 4%; }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 40px;
+        }
+
+        .welcome h1 { font-family: 'Montserrat'; font-size: 1.8rem; letter-spacing: -1px; margin-bottom: 5px; }
+        .welcome p { color: var(--text-dim); font-size: 0.9rem; }
+
+        /* --- BENTO GRID --- */
+        .bento-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-auto-rows: minmax(160px, auto);
+            gap: 20px;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 25px;
+            position: relative;
+        }
+
+        .card-2x { grid-column: span 2; }
+        .card-large { grid-row: span 2; }
+
+        .stat-label { font-size: 0.7rem; text-transform: uppercase; color: var(--text-dim); font-weight: 800; letter-spacing: 1px; margin-bottom: 10px; display: block; }
+        .stat-value { font-family: 'Montserrat'; font-size: 2rem; margin-bottom: 5px; }
+
+        /* --- TOGGLE SWITCH --- */
+        .toggle-group { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid var(--border); }
+        .toggle-info h4 { font-size: 0.9rem; margin-bottom: 4px; }
+        
+        .switch {
+            position: relative; display: inline-block; width: 44px; height: 22px;
+        }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider {
+            position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #222; transition: .4s; border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px;
+            background-color: white; transition: .4s; border-radius: 50%;
+        }
+        input:checked + .slider { background-color: var(--accent); }
+        input:checked + .slider:before { transform: translateX(22px); }
+
+        /* --- TABLE --- */
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th { text-align: left; font-size: 0.6rem; text-transform: uppercase; color: var(--text-dim); padding: 15px 0; border-bottom: 1px solid var(--border); }
+        td { padding: 15px 0; font-size: 0.85rem; border-bottom: 1px solid var(--border); }
+
+        @media (max-width: 1024px) {
+            .bento-grid { grid-template-columns: 1fr 1fr; }
+            aside { width: 80px; padding: 40px 10px; }
+            .nav-label, .admin-logo span { display: none; }
+            .nav-item { justify-content: center; }
+        }
+        @media (max-width: 768px) {
+            aside { display: none; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .card-2x { grid-column: span 1; }
+        }
+    </style>
+</head>
+<body>
+
+    <aside>
+        <div class="admin-logo">
+            <div style="width: 10px; height: 10px; background: var(--accent); border-radius: 2px;"></div>
+            <span>STACKFORM</span>
+        </div>
+
+        <nav class="nav-group">
+            <span class="nav-label">General</span>
+            <a href="#" class="nav-item active">Dashboard</a>
+            <a href="#" class="nav-item">Analytics</a>
+            <a href="#" class="nav-item">Submissions</a>
+        </nav>
+
+        <nav class="nav-group">
+            <span class="nav-label">System</span>
+            <a href="#" class="nav-item">Toggles</a>
+            <a href="#" class="nav-item">Logs</a>
+        </nav>
+    </aside>
+
+    <main>
+        <header>
+            <div class="welcome">
+                <h1>Root Terminal</h1>
+                <p>Status: Authenticated // Path: _sys_logs</p>
+            </div>
+            <div style="font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--accent);">
+                KEY_3478_VALIDATED
+            </div>
+        </header>
+
+        <div class="bento-grid">
+            <div class="card card-2x card-large">
+                <span class="stat-label">Site Activity</span>
+                <div id="chart"></div>
+            </div>
+
+            <div class="card">
+                <span class="stat-label">Active Nodes</span>
+                <div class="stat-value">1.4k</div>
+                <div style="color: #00ff88; font-size: 0.75rem; font-weight: 700;">+8% increase</div>
+            </div>
+
+            <div class="card">
+                <span class="stat-label">Pending Inquiries</span>
+                <div class="stat-value">12</div>
+                <div style="color: var(--accent); font-size: 0.75rem; font-weight: 700;">Priority: High</div>
+            </div>
+
+            <div class="card card-large">
+                <span class="stat-label">Feature Control</span>
+                
+                <div class="toggle-group" style="margin-top: 20px;">
+                    <div class="toggle-info">
+                        <h4>Maintenance</h4>
+                    </div>
+                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <h4>Lead Capture</h4>
+                    </div>
+                    <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
+                </div>
+
+                <div class="toggle-group">
+                    <div class="toggle-info">
+                        <h4>Public API</h4>
+                    </div>
+                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                </div>
+            </div>
+
+            <div class="card card-2x">
+                <span class="stat-label">Recent Submissions</span>
+                <table>
+                    <thead>
+                        <tr><th>Source</th><th>Type</th><th>Status</th></tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Client_01</td><td>Development</td><td style="color: var(--accent);">Unread</td></tr>
+                        <tr><td>Client_05</td><td>Branding</td><td>Archived</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Simple Chart Setup
+        var options = {
+            series: [{ name: 'Traffic', data: [45, 52, 38, 45, 19, 23, 10] }],
+            chart: { type: 'area', height: 320, toolbar: {show: false}, background: 'transparent' },
+            colors: ['#2F6BFF'],
+            dataLabels: { enabled: false },
+            stroke: { curve: 'smooth', width: 2 },
+            theme: { mode: 'dark' },
+            grid: { borderColor: 'rgba(255,255,255,0.05)' },
+            xaxis: { categories: ['M','T','W','T','F','S','S'] }
+        };
+        new ApexCharts(document.querySelector("#chart"), options).render();
+    </script>
+</body>
+</html>
