@@ -5,15 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <script>
-        (function() {
-            const isMaintenance = localStorage.getItem('maintenanceMode') === 'true';
-            const isAdminPath = window.location.pathname.includes('sys-logs');
-            
-            if (isMaintenance && !isAdminPath) {
-                // Corrected redirect to maintenance.html
-                window.location.replace('/maintenance.html');
-            }
-        })();
+    (function() {
+        const isMaintenance = localStorage.getItem('maintenanceMode') === 'true';
+        const isAdminPath = window.location.pathname.includes('sys-logs');
+        
+        if (isMaintenance && !isAdminPath) {
+            // Points to the maintenance folder in root
+            window.location.replace('maintenance/');
+        }
+    })();
     </script>
 
     <meta name="google-site-verification" content="THTrCrHzMRlBgni9F-QEF9iwuMUwRd85f-OchFK5PJs" />
@@ -41,7 +41,7 @@
         /* Dark Mode Override Class */
         body.dark-override { background-color: var(--dark-bg); color: #fff; }
         body.dark-override .logo, body.dark-override .nav-link { color: #fff; }
-        body.dark-override header.active { background: rgba(5, 5, 5, 0.92); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        body.dark-override header.active { background: rgba(5, 5, 5, 0.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(255,255,255,0.08); }
         body.dark-override .hero-title .outline { -webkit-text-stroke: 1.5px #fff; }
         body.dark-override .bento-card { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); color: #fff; }
         body.dark-override .btn-secondary { color: #fff; border-color: rgba(255,255,255,0.2); }
@@ -100,6 +100,7 @@
                 background: #fff; flex-direction: column; justify-content: center;
                 transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); gap: 30px; z-index: 1050;
             }
+            body.dark-override .nav-menu { background: var(--dark-bg); }
             .nav-menu.is-active { right: 0; }
             .nav-link { font-size: 1.5rem; }
         }

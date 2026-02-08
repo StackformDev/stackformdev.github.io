@@ -3,6 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <script>
+    (function() {
+        const isMaintenance = localStorage.getItem('maintenanceMode') === 'true';
+        const isAdminPath = window.location.pathname.includes('sys-logs');
+        
+        if (isMaintenance && !isAdminPath) {
+            // FIXED: Points to the maintenance folder relative to this subfolder
+            window.location.replace('../maintenance/');
+        }
+    })();
+    </script>
+    
     <title>Initialize Project | STACKFORM</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -204,7 +217,7 @@
             el.classList.add('active');
         }
 
-        // --- THE "REAL" SUBMISSION ENGINE ---
+        // SUBMISSION LOGIC
         document.getElementById('projectForm').addEventListener('submit', function(e) {
             e.preventDefault();
             let hasError = false;
@@ -259,7 +272,7 @@
                 document.getElementById('successNote').style.display = "block";
             })
             .catch(err => {
-                // Even if email fails, we saved it to LocalStorage, so show success
+                // Fallback: Local save worked even if server failed
                 document.getElementById('formContent').style.display = "none";
                 document.getElementById('successNote').style.display = "block";
             });

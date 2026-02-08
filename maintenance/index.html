@@ -1,8 +1,19 @@
-<!DOCTYPE html>
+\<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+    (function() {
+        // If maintenance mode is turned OFF, automatically send them back home
+        const isMaintenance = localStorage.getItem('maintenanceMode') === 'true';
+        if (!isMaintenance) {
+            window.location.replace('../'); 
+        }
+    })();
+    </script>
+    
     <title>System Offline | STACKFORM</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -13,7 +24,6 @@
         :root {
             --bg: #050505;
             --light-sheen: rgba(255, 255, 255, 0.015); 
-            /* Ghost-level visibility: Only seen if you're looking for it */
             --grid-line: rgba(255, 255, 255, 0.008); 
         }
 
@@ -51,7 +61,6 @@
                 linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
             background-size: 60px 60px;
             background-position: center center;
-            /* Tightened mask to make it even more subtle at the edges */
             mask-image: radial-gradient(circle at center, black 0%, transparent 60%);
             -webkit-mask-image: radial-gradient(circle at center, black 0%, transparent 60%);
             pointer-events: none;
@@ -94,12 +103,10 @@
         
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.3; } 100% { opacity: 1; } }
 
-        /* Responsive scaling */
         @media (max-width: 768px) {
             header { padding-top: 40px; }
             .title { letter-spacing: -1px; }
             .desc { font-size: 0.85rem; padding: 0 10px; }
-            /* Maintains the "small" grid feel even on mobile */
             body::after { background-size: 40px 40px; } 
         }
     </style>

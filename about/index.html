@@ -3,6 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+    (function() {
+        const isMaintenance = localStorage.getItem('maintenanceMode') === 'true';
+        const isAdminPath = window.location.pathname.includes('sys-logs');
+        
+        if (isMaintenance && !isAdminPath) {
+            // FIXED: Points to the maintenance folder relative to this subfolder
+            window.location.replace('../maintenance/');
+        }
+    })();
+    </script>
+    
     <title>About - STACKFORM</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
