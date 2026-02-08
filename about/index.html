@@ -53,7 +53,7 @@
         .leak-purple { background: var(--purple); bottom: -20%; left: -10%; animation-delay: -5s; }
         @keyframes fluidLeak { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(12%, 18%) scale(1.1); } }
 
-        /* --- HEADER & NAVIGATION --- */
+        /* --- HEADER --- */
         header { position: fixed; top: 0; width: 100%; padding: 0 5%; height: var(--h-normal); display: flex; align-items: center; justify-content: space-between; z-index: 1000; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         header.active { height: var(--h-scrolled); background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(0,0,0,0.08); }
         .logo { font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; text-decoration: none; color: var(--primary); text-transform: uppercase; z-index: 1001; }
@@ -63,31 +63,7 @@
         .nav-link::after { content: ''; position: absolute; bottom: -2px; height: 3px; width: 0; background-color: var(--accent); right: 0; transition: width 0.4s ease; }
         .nav-link:hover::after, .nav-link.current::after { width: 100%; left: 0; }
 
-        /* --- MOBILE MENU --- */
-        .mobile-toggle { display: none; cursor: pointer; z-index: 1100; width: 44px; height: 44px; align-items: center; justify-content: center; }
-        .menu-icon { width: 26px; height: 16px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-        .menu-icon span { display: block; width: 100%; height: 2px; background-color: var(--primary); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); transform-origin: center; }
-        .menu-icon.is-active span:nth-child(2) { transform: scaleX(0); }
-        .menu-icon.is-active span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-        .menu-icon.is-active span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
-
-        @media (max-width: 900px) {
-            .mobile-toggle { display: flex; }
-            .nav-menu {
-                position: fixed; top: 0; right: -100%; width: 100%; height: 100vh;
-                background: #fff; flex-direction: column; justify-content: center;
-                transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); gap: 30px; z-index: 1050;
-            }
-            .nav-menu.is-active { right: 0; }
-            .nav-link { font-size: 1.5rem; }
-        }
-
-        /* --- BUTTONS --- */
-        .btn { display: inline-block; padding: 18px 36px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; border: none; }
-        .btn-primary { background: var(--primary); color: #fff; }
-        .btn-primary:hover { background: var(--accent); transform: translateY(-5px); box-shadow: 0 12px 25px var(--ghost-shadow); }
-
-        /* --- ABOUT CONTENT --- */
+        /* --- CONTENT --- */
         .about-hero { padding: 220px 10% 100px; }
         .about-hero h1 { font-family: 'Montserrat'; font-size: clamp(3.5rem, 8vw, 7rem); line-height: 0.9; letter-spacing: -4px; text-transform: uppercase; margin-bottom: 40px; }
         
@@ -95,6 +71,7 @@
         .about-intro p { font-size: 1.25rem; line-height: 1.6; color: rgba(15,17,21,0.8); font-weight: 500; }
         .about-details { font-size: 0.9rem; line-height: 1.8; color: rgba(15,17,21,0.5); }
 
+        /* --- BENTO SECTION --- */
         .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; padding: 0 10% 160px; }
         .bento-card { grid-column: span 4; background: rgba(255,255,255,0.75); border: 1px solid rgba(0,0,0,0.08); padding: 45px; border-radius: 24px; opacity: 0; transform: translateY(30px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
         .bento-card.wide { grid-column: span 8; }
@@ -102,16 +79,27 @@
         .bento-card h3 { font-family: 'Montserrat'; font-size: 1.5rem; letter-spacing: -1px; margin-bottom: 15px; text-transform: uppercase; }
         .bento-card p { color: rgba(15,17,21,0.6); line-height: 1.6; font-size: 0.95rem; }
 
+        /* --- TECH MARQUEE --- */
+        .marquee { overflow: hidden; white-space: nowrap; padding: 60px 0; background: var(--primary); color: #fff; margin-bottom: 120px; }
+        .marquee-inner { display: inline-block; animation: marquee 20s linear infinite; }
+        .marquee-item { display: inline-block; font-family: 'Montserrat'; font-size: 4rem; font-weight: 900; margin-right: 60px; text-transform: uppercase; opacity: 0.2; transition: 0.3s; cursor: default; }
+        .marquee-item:hover { opacity: 1; color: var(--accent); }
+        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+        /* --- BUTTONS --- */
+        .btn { display: inline-block; padding: 18px 36px; border-radius: 8px; font-weight: 800; font-size: 0.75rem; cursor: pointer; transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); text-decoration: none; text-transform: uppercase; letter-spacing: 1px; border: none; }
+        .btn-primary { background: var(--primary); color: #fff; }
+        .btn-primary:hover { background: var(--accent); transform: translateY(-5px); box-shadow: 0 12px 25px var(--ghost-shadow); }
+
         /* --- FOOTER --- */
-        footer { background: #050505; color: #fff; padding: 160px 15% 60px; position: relative; z-index: 10; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+        footer { background: #050505; color: #fff; padding: 160px 10% 60px; position: relative; z-index: 10; border-top: 1px solid rgba(255, 255, 255, 0.05); }
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 120px; }
         .footer-brand .logo { color: #fff; font-size: 1.5rem; margin-bottom: 25px; display: block; }
         .footer-col h4 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(255, 255, 255, 0.3); margin-bottom: 35px; font-weight: 800; }
         .footer-col ul { list-style: none; }
         .footer-col ul li { margin-bottom: 18px; }
         .footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: 0.4s ease; display: inline-block; }
-        .footer-col ul:hover li a { opacity: 0.4; }
-        .footer-col ul li a:hover { color: #ffffff; opacity: 1 !important; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+        .footer-col ul li a:hover { color: #ffffff; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
         .footer-bottom { padding-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; }
         .footer-bottom p { font-size: 0.65rem; color: rgba(255, 255, 255, 0.25); letter-spacing: 0.15em; font-weight: 700; text-transform: uppercase; }
         .status-pill { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
@@ -119,7 +107,7 @@
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
         @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } .about-intro { grid-template-columns: 1fr; gap: 40px; } }
-        @media (max-width: 900px) { .bento-grid { display: flex; flex-direction: column; } .footer-grid { grid-template-columns: 1fr; gap: 40px; } }
+        @media (max-width: 900px) { .bento-grid { display: flex; flex-direction: column; } .footer-grid { grid-template-columns: 1fr; gap: 40px; } .marquee-item { font-size: 2.5rem; } }
     </style>
 </head>
 <body>
@@ -129,10 +117,7 @@
 
     <header id="header">
         <a href="../" class="logo">STACKFORM</a>
-        <div class="mobile-toggle" id="mobile-toggle">
-            <div class="menu-icon" id="menu-icon"><span></span><span></span><span></span></div>
-        </div>
-        <nav class="nav-menu" id="nav-menu">
+        <nav class="nav-menu">
             <a href="../" class="nav-link">Home</a>
             <a href="../work/" class="nav-link">Work</a>
             <a href="./" class="nav-link current">About</a>
@@ -156,19 +141,36 @@
         <div class="bento-grid">
             <div class="bento-card wide reveal">
                 <h3>Our Philosophy</h3>
-                <p>Performance is not a feature; it is the foundation. We believe that a website should be as robust under the hood as it is beautiful on the surface.</p>
+                <p>Performance is not a feature; it is the foundation. We believe that a website should be as robust under the hood as it is beautiful on the surface. We prioritize core web vitals as highly as aesthetic impact.</p>
             </div>
             <div class="bento-card reveal">
                 <h3>The Studio</h3>
-                <p>Operating from Melbourne, AU. Available worldwide for projects that require a higher standard of digital craftsmanship.</p>
+                <p>Operating from Melbourne, AU. We operate as a high-density team of specialists, ensuring direct access to lead developers on every project.</p>
             </div>
             <div class="bento-card reveal">
                 <h3>Precision</h3>
-                <p>Pixel-perfect isn't a goal, it's our baseline. We obsess over the details so your users don't have to.</p>
+                <p>Pixel-perfect isn't a goal, it's our baseline. We obsess over micro-interactions and easing curves to create a "tactile" digital feel.</p>
             </div>
             <div class="bento-card wide reveal">
                 <h3>Strategy First</h3>
-                <p>We start with "Why." Before a single line of code is written, we define the narrative that will define your project's success.</p>
+                <p>We start with "Why." Before a single line of code is written, we map out the user journey and define the narrative that will drive your project's KPIs.</p>
+            </div>
+        </div>
+
+        <div class="marquee">
+            <div class="marquee-inner">
+                <span class="marquee-item">Webflow</span>
+                <span class="marquee-item">Three.js</span>
+                <span class="marquee-item">React</span>
+                <span class="marquee-item">GSAP</span>
+                <span class="marquee-item">Shopify</span>
+                <span class="marquee-item">Figma</span>
+                <span class="marquee-item">Webflow</span>
+                <span class="marquee-item">Three.js</span>
+                <span class="marquee-item">React</span>
+                <span class="marquee-item">GSAP</span>
+                <span class="marquee-item">Shopify</span>
+                <span class="marquee-item">Figma</span>
             </div>
         </div>
     </main>
@@ -184,7 +186,6 @@
                 <h4>Sitemap</h4>
                 <ul>
                     <li><a href="../work/">Work</a></li>
-                    <li><a href="#">Services</a></li>
                     <li><a href="./">About</a></li>
                     <li><a href="../inquiry/">Contact</a></li>
                 </ul>
@@ -192,7 +193,6 @@
             <div class="footer-col">
                 <h4>Social</h4>
                 <ul>
-                    <li><a href="#">Twitter / X</a></li>
                     <li><a href="#">LinkedIn</a></li>
                     <li><a href="#">Instagram</a></li>
                     <li><a href="#">Dribbble</a></li>
@@ -210,22 +210,21 @@
     </footer>
 
     <script>
-        const mobileToggle = document.getElementById('mobile-toggle');
-        const navMenu = document.getElementById('nav-menu');
-        const menuIcon = document.getElementById('menu-icon');
-
-        mobileToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('is-active');
-            menuIcon.classList.toggle('is-active');
-        });
-
         window.addEventListener('load', () => {
             document.body.classList.add('loaded');
-            setTimeout(() => {
-                document.querySelectorAll('.bento-card').forEach((card, i) => {
-                    setTimeout(() => card.classList.add('reveal'), i * 150);
+            
+            // Intersection Observer for Bento Cards
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach((entry, i) => {
+                    if (entry.isIntersecting) {
+                        setTimeout(() => {
+                            entry.target.classList.add('reveal');
+                        }, i * 100);
+                    }
                 });
-            }, 500);
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.bento-card').forEach(card => observer.observe(card));
         });
 
         window.addEventListener('scroll', () => {

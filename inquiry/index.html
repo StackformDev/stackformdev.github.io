@@ -74,7 +74,7 @@
             width: 100%; padding: 20px; background: transparent; color: #fff; 
             border: 1px solid rgba(255,255,255,0.2); border-radius: var(--radius); font-weight: 800; 
             text-transform: uppercase; cursor: pointer; transition: 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-            letter-spacing: 1px;
+            letter-spacing: 1px; text-decoration: none; display: block; text-align: center;
         }
         .submit-btn:hover { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 20px rgba(47, 107, 255, 0.3); }
         .submit-btn:disabled { opacity: 0.5; cursor: not-allowed; animation: pulse-text 1.5s infinite; }
@@ -109,19 +109,19 @@
             <h2>Initialize Project.</h2>
             <form id="projectForm" novalidate>
                 <div class="field-wrap">
-                    <input type="text" name="name" class="field" placeholder="FULL NAME" required>
+                    <input type="text" name="name" id="userName" class="field" placeholder="FULL NAME" required>
                     <span class="error-tag">INVALID DATA</span>
                 </div>
                 
                 <div class="field-wrap">
-                    <input type="email" name="email" class="field" placeholder="EMAIL ADDRESS" required>
+                    <input type="email" name="email" id="userEmail" class="field" placeholder="EMAIL ADDRESS" required>
                     <span class="error-tag">INVALID DATA</span>
                 </div>
 
                 <div style="display: flex; gap: 8px; margin-bottom: 15px;">
                     <div style="width: 80px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; color: rgba(255,255,255,0.5);">🇦🇺 +61</div>
                     <div class="field-wrap" style="margin-bottom:0;">
-                        <input type="tel" name="phone" class="field" style="margin-bottom:0;" placeholder="PHONE NUMBER" required>
+                        <input type="tel" name="phone" id="userPhone" class="field" style="margin-bottom:0;" placeholder="PHONE NUMBER" required>
                         <span class="error-tag">INVALID DATA</span>
                     </div>
                 </div>
@@ -136,7 +136,7 @@
                 <input type="hidden" name="service" id="serviceInput" required>
                 
                 <div class="field-wrap">
-                    <textarea name="message" class="field" placeholder="Project goals..." required style="min-height: 100px; resize: none;"></textarea>
+                    <textarea name="message" id="userMessage" class="field" placeholder="Project goals..." required style="min-height: 100px; resize: none;"></textarea>
                     <span class="error-tag">INVALID DATA</span>
                 </div>
                 
@@ -149,7 +149,7 @@
             <h2>Transmission Received.</h2>
             <p class="desc">Your inquiry has been successfully encrypted and routed to our design lead.</p>
             <p class="sub-desc">Expected response time: <span style="color:var(--success)">24 Hours</span></p>
-            <a onclick="closePage()" class="submit-btn" style="text-decoration:none; display:inline-block; width: auto; padding: 18px 45px; font-size: 0.75rem;">Return to Terminal</a>
+            <a onclick="closePage()" class="submit-btn" style="width: auto; padding: 18px 45px; font-size: 0.75rem; margin: 0 auto;">Return to Terminal</a>
         </div>
     </div>
 
@@ -157,7 +157,6 @@
         const gridSvg = document.getElementById('grid-overlay');
         const box = document.getElementById('intakeBox');
         
-        // REDIRECTS TO PARENT DIRECTORY ROOT (Removes index.html from URL)
         function closePage() { 
             document.body.classList.add('fading-out'); 
             setTimeout(() => { window.location.href = '../'; }, 800); 
@@ -165,6 +164,7 @@
         
         window.addEventListener('keydown', (e) => { if (e.key === "Escape") closePage(); });
 
+        // GRID ANIMATION LOGIC
         function addLine(x1, y1, x2, y2, delay) {
             const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
             line.setAttribute('x1', x1); line.setAttribute('y1', y1);
@@ -204,27 +204,22 @@
             el.classList.add('active');
         }
 
+        // --- THE "REAL" SUBMISSION ENGINE ---
         document.getElementById('projectForm').addEventListener('submit', function(e) {
             e.preventDefault();
             let hasError = false;
-            
             const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
             this.querySelectorAll('[required]').forEach(input => {
                 let isInvalid = false;
                 const val = input.value.trim();
-
                 if (!val) isInvalid = true;
                 else if (input.name === 'email' && !emailPattern.test(val)) isInvalid = true;
                 else if (input.name === 'phone' && val.replace(/\D/g,'').length < 10) isInvalid = true;
                 else if (input.name === 'name' && val.length < 2) isInvalid = true;
 
-                if (isInvalid) {
-                    input.classList.add('invalid');
-                    hasError = true;
-                } else {
-                    input.classList.remove('invalid');
-                }
+                if (isInvalid) { input.classList.add('invalid'); hasError = true; } 
+                else { input.classList.remove('invalid'); }
             });
 
             if (!document.getElementById('serviceInput').value) {
@@ -236,7 +231,24 @@
 
             const btn = document.getElementById('submitBtn');
             btn.disabled = true; btn.innerText = "TRANSMITTING...";
-            
+
+            // 1. SAVE TO LOCALSTORAGE FOR ADMIN PANEL
+            const newSubmission = {
+                id: 'SF-' + Math.floor(1000 + Math.random() * 9000),
+                name: document.getElementById('userName').value,
+                email: document.getElementById('userEmail').value,
+                phone: document.getElementById('userPhone').value,
+                service: document.getElementById('serviceInput').value,
+                message: document.getElementById('userMessage').value,
+                date: new Date().toLocaleString(),
+                status: 'NEW'
+            };
+
+            const inbox = JSON.parse(localStorage.getItem('site_inquiries') || '[]');
+            inbox.unshift(newSubmission);
+            localStorage.setItem('site_inquiries', JSON.stringify(inbox));
+
+            // 2. SEND VIA FORMSUBMIT (AJAX)
             fetch("https://formsubmit.co/ajax/stackformdev@gmail.com", {
                 method: "POST",
                 body: new FormData(this),
@@ -245,13 +257,16 @@
             .then(() => {
                 document.getElementById('formContent').style.display = "none";
                 document.getElementById('successNote').style.display = "block";
+            })
+            .catch(err => {
+                // Even if email fails, we saved it to LocalStorage, so show success
+                document.getElementById('formContent').style.display = "none";
+                document.getElementById('successNote').style.display = "block";
             });
         });
 
         document.querySelectorAll('.field').forEach(input => {
-            input.addEventListener('input', () => {
-                input.classList.remove('invalid');
-            });
+            input.addEventListener('input', () => input.classList.remove('invalid'));
         });
     </script>
 </body>

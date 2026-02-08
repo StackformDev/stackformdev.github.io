@@ -6,11 +6,12 @@
     
     <script>
         (function() {
-            if (localStorage.getItem('maintenanceMode') === 'true') {
-                // Redirect everyone to offline page EXCEPT the admin route
-                if (!window.location.pathname.includes('sys-logs')) {
-                    window.location.replace('offline.html');
-                }
+            const isMaintenance = localStorage.getItem('maintenanceMode') === 'true';
+            const isAdminPath = window.location.pathname.includes('sys-logs');
+            
+            if (isMaintenance && !isAdminPath) {
+                // Corrected redirect to maintenance.html
+                window.location.replace('/maintenance.html');
             }
         })();
     </script>
@@ -37,9 +38,17 @@
             --radius: 8px; 
         }
 
+        /* Dark Mode Override Class */
+        body.dark-override { background-color: var(--dark-bg); color: #fff; }
+        body.dark-override .logo, body.dark-override .nav-link { color: #fff; }
+        body.dark-override header.active { background: rgba(5, 5, 5, 0.92); border-bottom: 1px solid rgba(255,255,255,0.08); }
+        body.dark-override .hero-title .outline { -webkit-text-stroke: 1.5px #fff; }
+        body.dark-override .bento-card { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); color: #fff; }
+        body.dark-override .btn-secondary { color: #fff; border-color: rgba(255,255,255,0.2); }
+
         html { scroll-behavior: smooth; }
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: var(--bg); color: var(--primary); font-family: 'Inter', sans-serif; overflow-x: hidden; }
+        body { background-color: var(--bg); color: var(--primary); font-family: 'Inter', sans-serif; overflow-x: hidden; transition: background 0.5s ease; }
 
         /* --- CINEMATIC SHUTTER --- */
         #shutter {
@@ -93,13 +102,6 @@
             }
             .nav-menu.is-active { right: 0; }
             .nav-link { font-size: 1.5rem; }
-            
-            .nav-menu .btn { 
-                width: fit-content !important; 
-                min-width: 200px; 
-                margin: 0 auto; 
-                text-align: center;
-            }
         }
 
         /* --- BUTTONS --- */
@@ -120,11 +122,6 @@
             background: transparent; color: var(--primary); 
             border: 1px solid rgba(15, 17, 21, 0.2); 
         }
-        .btn-secondary:hover { 
-            border-color: var(--accent); color: var(--accent); 
-            transform: translateY(-5px); 
-            z-index: 2; 
-        }
 
         /* --- HERO & ENTRANCE --- */
         .hero { height: 100vh; display: flex; align-items: center; padding: 0 15%; }
@@ -136,28 +133,12 @@
             filter: blur(20px); 
             transform: translateY(40px); 
             transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
-            will-change: transform, opacity, filter;
         }
 
-        .hero-btns { 
-            display: flex; 
-            gap: 24px; 
-            align-items: center; 
-        }
-
+        .hero-btns { display: flex; gap: 24px; align-items: center; }
         .hero-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--primary); display: block; }
         
-        .hero-title span.animate-in, .hero-btns.animate-in {
-            opacity: 1;
-            filter: blur(0);
-            transform: translateY(0);
-        }
-
-        @media (max-width: 768px) {
-            .hero { padding: 0 5%; }
-            .hero-btns { flex-direction: column; gap: 15px; width: 100%; align-items: flex-start; }
-            .btn { width: 100%; text-align: center; }
-        }
+        .hero-title span.animate-in, .hero-btns.animate-in { opacity: 1; filter: blur(0); transform: translateY(0); }
 
         /* --- BENTO GRID --- */
         .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; padding: 0 15% 160px; }
@@ -165,10 +146,6 @@
         .bento-card.wide { grid-column: span 8; }
         .reveal { opacity: 0; filter: blur(8px); transform: translateY(40px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
         .reveal.active { opacity: 1; filter: blur(0); transform: translateY(0); }
-
-        @media (max-width: 900px) {
-            .bento-grid { display: flex; flex-direction: column; padding: 0 5% 80px; }
-        }
 
         /* --- FOOTER --- */
         footer { background: #050505; color: #fff; padding: 160px 15% 60px; position: relative; z-index: 10; border-top: 1px solid rgba(255, 255, 255, 0.05); }
@@ -178,16 +155,14 @@
         .footer-col ul { list-style: none; }
         .footer-col ul li { margin-bottom: 18px; }
         .footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: 0.4s ease; display: inline-block; }
-        .footer-col ul:hover li a { opacity: 0.4; }
-        .footer-col ul li a:hover { color: #ffffff; opacity: 1 !important; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+        .footer-col ul li a:hover { color: #ffffff; opacity: 1 !important; }
         .footer-bottom { padding-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; }
         .footer-bottom p { font-size: 0.65rem; color: rgba(255, 255, 255, 0.25); letter-spacing: 0.15em; font-weight: 700; text-transform: uppercase; }
         .status-pill { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
         .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 40px; } }
+        @media (max-width: 900px) { .bento-grid { display: flex; flex-direction: column; padding: 0 5% 80px; } }
     </style>
 </head>
 <body>
@@ -254,7 +229,6 @@
                     <li><a href="#">Twitter / X</a></li>
                     <li><a href="#">LinkedIn</a></li>
                     <li><a href="#">Instagram</a></li>
-                    <li><a href="#">Dribbble</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -269,27 +243,35 @@
     </footer>
 
     <script>
+        // CONFIG & CORE OS SYNC
+        window.addEventListener('DOMContentLoaded', () => {
+            const s = JSON.parse(localStorage.getItem('site_settings') || '{}');
+
+            // 1. Handle Dark Mode Toggle
+            if (s.darkMode) {
+                document.body.classList.add('dark-override');
+            }
+
+            // 2. Handle Announcement Bar
+            if (s.showBar && s.announcement) {
+                const bar = document.createElement('div');
+                bar.style = "background:var(--accent); color:white; text-align:center; padding:8px; font-size:0.65rem; font-weight:900; letter-spacing:2px; position:fixed; top:0; width:100%; z-index:2000;";
+                bar.innerText = s.announcement.toUpperCase();
+                document.body.prepend(bar);
+                document.getElementById('header').style.top = '30px';
+            }
+        });
+
         const mobileToggle = document.getElementById('mobile-toggle');
         const navMenu = document.getElementById('nav-menu');
         const menuIcon = document.getElementById('menu-icon');
 
-        // MOBILE MENU LOGIC
         mobileToggle.addEventListener('click', () => {
             const isActive = navMenu.classList.toggle('is-active');
             menuIcon.classList.toggle('is-active');
             document.body.style.overflow = isActive ? 'hidden' : 'auto';
         });
 
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                navMenu.classList.remove('is-active');
-                menuIcon.classList.remove('is-active');
-                document.body.style.overflow = 'auto';
-            });
-        });
-
-        // INTERSECTION OBSERVER for Scroll Reveal
-        const observerOptions = { threshold: 0.15 };
         const revealObserver = new IntersectionObserver((entries) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
@@ -297,22 +279,17 @@
                     revealObserver.unobserve(entry.target);
                 }
             });
-        }, observerOptions);
+        }, { threshold: 0.15 });
 
-        // LOADING & HERO ANIMATIONS
         window.addEventListener('load', () => { 
             document.body.classList.add('loaded'); 
-            
             document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
 
             setTimeout(() => {
                 const spans = document.querySelectorAll('.hero-title span');
                 spans.forEach((span, index) => {
-                    setTimeout(() => {
-                        requestAnimationFrame(() => span.classList.add('animate-in'));
-                    }, index * 120);
+                    setTimeout(() => span.classList.add('animate-in'), index * 120);
                 });
-                
                 setTimeout(() => {
                     const btns = document.querySelector('.hero-btns');
                     if(btns) btns.classList.add('animate-in');
@@ -320,10 +297,8 @@
             }, 400);
         });
 
-        // HEADER SCROLL EFFECT
         window.addEventListener('scroll', () => {
-            const header = document.getElementById('header');
-            header.classList.toggle('active', window.scrollY > 50);
+            document.getElementById('header').classList.toggle('active', window.scrollY > 50);
         }, { passive: true });
     </script>
 </body>
