@@ -1,9 +1,20 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <script>
+        (function() {
+            if (localStorage.getItem('maintenanceMode') === 'true') {
+                // Redirect everyone to offline page EXCEPT the admin route
+                if (!window.location.pathname.includes('sys-logs')) {
+                    window.location.replace('offline.html');
+                }
+            }
+        })();
+    </script>
+
     <meta name="google-site-verification" content="THTrCrHzMRlBgni9F-QEF9iwuMUwRd85f-OchFK5PJs" />
     <title>STACKFORM - Web Engineering</title>
     <meta name="description" content="STACKFORM (stackformdev) crafts high-performance websites that command focus. We merge precision engineering with visual narrative to build scalable digital experiences.">

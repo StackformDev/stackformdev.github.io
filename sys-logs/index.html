@@ -6,11 +6,13 @@
     <title>STACKFORM // CORE_OS</title>
     
     <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        if (urlParams.get('key') !== '3478') {
-            document.documentElement.style.display = 'none';
-            window.location.replace('../404.html');
-        }
+        (function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('key') !== '3478') {
+                document.documentElement.style.display = 'none';
+                window.location.replace('../404.html');
+            }
+        })();
     </script>
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -26,7 +28,7 @@
             --text-main: #FFFFFF;
             --text-dim: rgba(255, 255, 255, 0.4);
             --radius: 14px;
-            --transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            --transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
@@ -61,7 +63,17 @@
             gap: 12px;
         }
 
-        .logo-dot { width: 8px; height: 8px; background: var(--accent); border-radius: 2px; box-shadow: 0 0 15px var(--accent); }
+        .logo-dot { 
+            width: 8px; height: 8px; background: var(--accent); border-radius: 2px; 
+            box-shadow: 0 0 15px var(--accent);
+            animation: pulse 2s infinite; 
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.4; }
+            100% { opacity: 1; }
+        }
 
         .nav-item {
             display: flex;
@@ -69,8 +81,9 @@
             padding: 14px 18px;
             color: var(--text-dim);
             text-decoration: none;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             font-weight: 700;
+            letter-spacing: 1px;
             border-radius: var(--radius);
             margin-bottom: 8px;
             transition: var(--transition);
@@ -81,41 +94,41 @@
         .nav-item:hover {
             color: #fff;
             background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--border);
             transform: translateX(5px);
         }
 
         .nav-item.active {
-            background: rgba(47, 107, 255, 0.08);
+            background: rgba(47, 107, 255, 0.1);
             color: var(--accent);
             border: 1px solid rgba(47, 107, 255, 0.2);
         }
 
-        /* --- VIEW MANAGEMENT --- */
+        /* --- CONTENT AREA --- */
         .content-container {
             flex: 1;
             position: relative;
-            padding: 40px 5%;
+            padding: 60px 5%;
             overflow-y: auto;
+            background-image: radial-gradient(circle at 50% 0%, rgba(47, 107, 255, 0.05) 0%, transparent 50%);
         }
 
         .view {
             display: none;
-            animation: slideUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         .view.active { display: block; }
 
         @keyframes slideUp {
-            from { opacity: 0; transform: translateY(20px); }
+            from { opacity: 0; transform: translateY(30px); }
             to { opacity: 1; transform: translateY(0); }
         }
 
-        /* --- BENTO DASHBOARD --- */
+        /* --- BENTO CARDS --- */
         .bento-grid {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 24px;
+            gap: 20px;
         }
 
         .card {
@@ -126,115 +139,109 @@
             transition: var(--transition);
         }
 
-        .card:hover { border-color: rgba(255,255,255,0.15); box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
-
+        .card:hover { border-color: rgba(255,255,255,0.1); background: #0c0c0c; }
         .card-2x { grid-column: span 2; }
 
-        /* --- SUBMISSION READER --- */
-        .inbox-list { display: flex; flex-direction: column; gap: 15px; }
+        /* --- SUBMISSION STYLES --- */
         .message-row {
             background: #0D0D0D;
             border: 1px solid var(--border);
             border-radius: var(--radius);
-            padding: 20px;
+            padding: 25px;
+            margin-bottom: 15px;
             cursor: pointer;
             transition: var(--transition);
         }
-        .message-row:hover { background: #111; border-color: var(--accent); }
-        
-        .msg-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.8rem; }
-        .msg-name { font-weight: 800; }
-        .msg-time { color: var(--text-dim); font-family: 'JetBrains Mono'; }
-        .msg-preview { font-size: 0.9rem; color: var(--text-dim); line-height: 1.5; }
+        .message-row:hover { border-color: var(--accent); transform: scale(1.01); }
+        .msg-meta { display: flex; justify-content: space-between; margin-bottom: 12px; font-family: 'JetBrains Mono'; font-size: 0.7rem; color: var(--accent); }
+        .msg-body { font-size: 0.95rem; line-height: 1.6; color: var(--text-dim); }
 
-        /* --- TOGGLES --- */
-        .switch { position: relative; width: 40px; height: 20px; }
+        /* --- SWITCHES --- */
+        .switch { position: relative; width: 44px; height: 22px; }
         .switch input { opacity: 0; width: 0; height: 0; }
         .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background: #222; transition: .4s; border-radius: 20px; }
-        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background: white; transition: .4s; border-radius: 50%; }
+        .slider:before { position: absolute; content: ""; height: 16px; width: 16px; left: 3px; bottom: 3px; background: white; transition: .4s; border-radius: 50%; }
         input:checked + .slider { background: var(--accent); }
-        input:checked + .slider:before { transform: translateX(20px); }
+        input:checked + .slider:before { transform: translateX(22px); }
 
+        @media (max-width: 900px) {
+            aside { width: 80px; padding: 40px 15px; }
+            .nav-item span, .logo span { display: none; }
+            .bento-grid { grid-template-columns: 1fr; }
+            .card-2x { grid-column: span 1; }
+        }
     </style>
 </head>
 <body>
 
     <aside>
-        <div class="logo"><div class="logo-dot"></div>STACKFORM</div>
+        <div class="logo"><div class="logo-dot"></div><span>STACKFORM</span></div>
         
-        <div class="nav-item active" onclick="showView('dashboard', this)">DASHBOARD</div>
-        <div class="nav-item" onclick="showView('inbox', this)">SUBMISSIONS</div>
-        <div class="nav-item" onclick="showView('settings', this)">SYSTEM_CONFIG</div>
+        <div class="nav-item active" onclick="showView('dashboard', this)">
+            <span>DASHBOARD</span>
+        </div>
+        <div class="nav-item" onclick="showView('inbox', this)">
+            <span>INBOX</span>
+        </div>
+        <div class="nav-item" onclick="showView('settings', this)">
+            <span>SETTINGS</span>
+        </div>
         
-        <div style="margin-top: auto; font-family: 'JetBrains Mono'; font-size: 0.6rem; color: var(--text-dim);">
-            SESSION_ID: 9X-3478<br>
-            ENCRYPTION: AES-256
+        <div style="margin-top: auto; font-family: 'JetBrains Mono'; font-size: 0.6rem; color: var(--text-dim); line-height: 1.8;">
+            ACCESS: GRANTED<br>
+            USER: STACKFORMDEV<br>
+            KEY: 3478
         </div>
     </aside>
 
     <div class="content-container">
         
         <div id="dashboard" class="view active">
-            <header style="margin-bottom: 40px;">
-                <h1 style="font-family: 'Montserrat'; font-size: 2rem;">Overview</h1>
-                <p style="color: var(--text-dim)">Real-time system health and analytics.</p>
-            </header>
-
+            <h1 style="font-family: 'Montserrat'; font-size: 2.2rem; margin-bottom: 40px; letter-spacing: -1px;">Core_Overview</h1>
             <div class="bento-grid">
                 <div class="card card-2x">
-                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-dim);">TRAFFIC_FLOW</span>
-                    <div id="main-chart"></div>
+                    <div id="chart-main"></div>
                 </div>
                 <div class="card">
-                    <span style="font-size: 0.7rem; font-weight: 800; color: var(--text-dim);">SERVER_LOAD</span>
-                    <div style="font-size: 2.5rem; font-family: 'Montserrat'; margin: 20px 0;">24<span style="font-size: 1rem; color: var(--text-dim);">ms</span></div>
-                    <p style="font-size: 0.75rem; color: #00ff88;">Stable Connection</p>
+                    <span style="font-size: 0.6rem; font-weight: 800; color: var(--text-dim); letter-spacing: 2px;">SYS_STATUS</span>
+                    <div style="font-size: 2.8rem; font-family: 'Montserrat'; margin: 20px 0;">99.1%</div>
+                    <div style="display: flex; align-items: center; gap: 8px; font-size: 0.75rem; color: #00ff88;">
+                        <div style="width: 6px; height: 6px; background: #00ff88; border-radius: 50%;"></div>
+                        ALL SYSTEMS GO
+                    </div>
                 </div>
             </div>
         </div>
 
         <div id="inbox" class="view">
-            <header style="margin-bottom: 40px;">
-                <h1 style="font-family: 'Montserrat'; font-size: 2rem;">Submissions</h1>
-                <p style="color: var(--text-dim)">Direct inquiries from stackformdev.github.io</p>
-            </header>
-
-            <div class="inbox-list">
-                <div class="message-row">
-                    <div class="msg-header">
-                        <span class="msg-name">JORDAN_REED // PROJECT_X</span>
-                        <span class="msg-time">14:02 PM</span>
-                    </div>
-                    <p class="msg-preview">"Looking for a full rebrand and interface overhaul for a Fintech startup. Timeline: Q2."</p>
-                </div>
-                <div class="message-row">
-                    <div class="msg-header">
-                        <span class="msg-name">SARAH_LANCE // ASSETS</span>
-                        <span class="msg-time">09:15 AM</span>
-                    </div>
-                    <p class="msg-preview">"Could you provide a quote for a 5-page bento-style portfolio similar to your current work?"</p>
-                </div>
+            <h1 style="font-family: 'Montserrat'; font-size: 2.2rem; margin-bottom: 40px; letter-spacing: -1px;">Client_Logs</h1>
+            <div class="message-row">
+                <div class="msg-meta"><span>ID: #8821</span><span>02.08.2026</span></div>
+                <div class="msg-body">New Inquiry: "Hi, I'm interested in the Bento-style UI design for my new SaaS project."</div>
+            </div>
+            <div class="message-row">
+                <div class="msg-meta"><span>ID: #8819</span><span>01.08.2026</span></div>
+                <div class="msg-body">New Inquiry: "Can we hop on a call to discuss the website migration to GitHub Pages?"</div>
             </div>
         </div>
 
         <div id="settings" class="view">
-            <header style="margin-bottom: 40px;">
-                <h1 style="font-family: 'Montserrat'; font-size: 2rem;">System Config</h1>
-                <p style="color: var(--text-dim)">Toggle global site states.</p>
-            </header>
-
-            <div class="card" style="max-width: 600px;">
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 0; border-bottom: 1px solid var(--border);">
+            <h1 style="font-family: 'Montserrat'; font-size: 2.2rem; margin-bottom: 40px; letter-spacing: -1px;">System_Config</h1>
+            <div class="card" style="max-width: 500px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 20px; border-bottom: 1px solid var(--border);">
                     <div>
                         <h4 style="font-size: 0.9rem;">Maintenance Mode</h4>
-                        <p style="font-size: 0.75rem; color: var(--text-dim);">Redirect all traffic to offline page</p>
+                        <p style="font-size: 0.75rem; color: var(--text-dim);">Toggles the 'offline.html' redirect</p>
                     </div>
-                    <label class="switch"><input type="checkbox"><span class="slider"></span></label>
+                    <label class="switch">
+                        <input type="checkbox" id="maintSwitch" onchange="updateMaint()">
+                        <span class="slider"></span>
+                    </label>
                 </div>
-                <div style="display: flex; justify-content: space-between; align-items: center; padding: 20px 0;">
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 20px;">
                     <div>
-                        <h4 style="font-size: 0.9rem;">Debug Mode</h4>
-                        <p style="font-size: 0.75rem; color: var(--text-dim);">Show grid lines and console logs</p>
+                        <h4 style="font-size: 0.9rem;">Lead Alerts</h4>
+                        <p style="font-size: 0.75rem; color: var(--text-dim);">Enable desktop notifications for forms</p>
                     </div>
                     <label class="switch"><input type="checkbox" checked><span class="slider"></span></label>
                 </div>
@@ -244,31 +251,31 @@
     </div>
 
     <script>
-        // VIEW SWITCHER LOGIC
-        function showView(viewId, element) {
-            // Update active nav item
-            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
-            element.classList.add('active');
-
-            // Switch views with animation
-            document.querySelectorAll('.view').forEach(view => view.classList.remove('active'));
-            document.getElementById(viewId).classList.add('active');
+        // SPA NAVIGATION
+        function showView(id, btn) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            btn.classList.add('active');
         }
 
-        // CHARTS
+        // MAINTENANCE LOGIC
+        document.getElementById('maintSwitch').checked = localStorage.getItem('maintenanceMode') === 'true';
+        function updateMaint() {
+            localStorage.setItem('maintenanceMode', document.getElementById('maintSwitch').checked);
+        }
+
+        // DASHBOARD CHART
         var options = {
-            series: [{ name: 'Requests', data: [31, 40, 28, 51, 42, 109, 100] }],
-            chart: { height: 350, type: 'area', toolbar: {show: false}, background: 'transparent' },
+            series: [{ name: 'Visits', data: [40, 60, 45, 90, 75, 120, 110] }],
+            chart: { height: 300, type: 'area', toolbar: {show: false}, background: 'transparent' },
             colors: ['#2F6BFF'],
             stroke: { curve: 'smooth', width: 3 },
-            fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0 } },
+            grid: { borderColor: 'rgba(255,255,255,0.05)', strokeDashArray: 5 },
             theme: { mode: 'dark' },
-            grid: { borderColor: 'rgba(255,255,255,0.05)', strokeDashArray: 4 },
-            xaxis: { categories: ["MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"] }
+            xaxis: { categories: ['M','T','W','T','F','S','S'] }
         };
-
-        var chart = new ApexCharts(document.querySelector("#main-chart"), options);
-        chart.render();
+        new ApexCharts(document.querySelector("#chart-main"), options).render();
     </script>
 </body>
 </html>
