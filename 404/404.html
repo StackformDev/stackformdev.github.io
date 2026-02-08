@@ -34,7 +34,7 @@
         }
         body.loaded #shutter { opacity: 0; visibility: hidden; }
 
-        /* --- BACKGROUND & LINKED BLOBS --- */
+        /* --- BACKGROUND --- */
         body::before {
             content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
             background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
@@ -46,15 +46,12 @@
 
         .leak-container { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; 
-            /* Rotates the entire container of blobs in sync with the orbits */
             animation: masterRotate 25s linear infinite;
         }
-        
         .leak { position: absolute; width: 80vw; height: 80vw; filter: blur(160px); border-radius: 50%; opacity: 0.08; }
         .leak-blue { background: var(--accent); top: -20%; right: -10%; }
         .leak-purple { background: var(--purple); bottom: -20%; left: -10%; }
 
-        /* Master animation linking background movement to central orbits */
         @keyframes masterRotate {
             from { transform: rotate(0deg) scale(1); }
             50% { transform: rotate(180deg) scale(1.1); }
@@ -64,62 +61,90 @@
         /* --- HEADER --- */
         header { position: fixed; top: 0; width: 100%; padding: 0 5%; height: var(--h-normal); display: flex; align-items: center; justify-content: space-between; z-index: 1000; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         header.active { height: var(--h-scrolled); background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(0,0,0,0.08); }
-        .logo { font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; text-decoration: none; color: var(--primary); text-transform: uppercase; z-index: 1001; }
-        .nav-menu { display: flex; gap: 40px; align-items: center; }
-        .nav-link { text-decoration: none; color: var(--primary); font-weight: 800; font-size: 0.75rem; letter-spacing: 0.15em; position: relative; padding: 10px 0; text-transform: uppercase; }
-        .nav-link::after { content: ''; position: absolute; bottom: -2px; height: 3px; width: 0; background-color: var(--accent); right: 0; transition: width 0.4s ease; }
-        .nav-link:hover::after { width: 100%; left: 0; }
-
-        /* --- BUTTONS --- */
-        .btn { 
-            display: inline-block; padding: 18px 36px; border-radius: var(--radius); 
-            font-weight: 800; font-size: 0.75rem; cursor: pointer; 
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
-            text-decoration: none; text-transform: uppercase; letter-spacing: 1px; 
-            border: none; position: relative;
+        .logo { font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; text-decoration: none; color: var(--primary); text-transform: uppercase; z-index: 1101; }
+        
+        /* --- 404 STAGE (FIXED RINGS) --- */
+        .main-stage { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 160px 5% 80px; position: relative; }
+        
+        .node-cluster { 
+            position: relative; 
+            width: 280px; /* Base size */
+            height: 280px; 
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
+
+        .orbit { 
+            position: absolute; 
+            border: 1px solid rgba(15,17,21,0.08); 
+            border-radius: 50%; 
+            display: flex;
+            justify-content: center;
+        }
+        
+        .orbit-1 { 
+            width: 50%; 
+            height: 50%; 
+            animation: orbitRotate 20s linear infinite; 
+        }
+        .orbit-2 { 
+            width: 100%; 
+            height: 100%; 
+            animation: orbitRotate 30s linear infinite reverse; 
+        }
+        
+        .satellite { 
+            position: absolute; 
+            width: 10px; 
+            height: 10px; 
+            background: var(--accent); 
+            border-radius: 50%; 
+            top: -5px; /* Half of height to sit perfectly on line */
+            box-shadow: 0 0 15px var(--accent); 
+        }
+        .satellite-purple { 
+            background: var(--purple); 
+            box-shadow: 0 0 15px var(--purple); 
+            top: auto; 
+            bottom: -5px; 
+        }
+        
+        @keyframes orbitRotate { 
+            from { transform: rotate(0deg); } 
+            to { transform: rotate(360deg); } 
+        }
+        
+        .error-title { font-family: 'Montserrat'; font-size: clamp(3rem, 12vw, 6rem); line-height: 0.9; letter-spacing: -4px; margin-bottom: 20px; text-transform: uppercase; }
+        .error-p { color: rgba(15,17,21,0.6); max-width: 440px; font-size: clamp(0.9rem, 3vw, 1.1rem); line-height: 1.6; margin-bottom: 40px; font-weight: 500; }
+
+        .btn { display: inline-block; padding: 18px 36px; border-radius: var(--radius); font-weight: 800; font-size: 0.75rem; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: 0.4s; }
         .btn-primary { background: var(--primary); color: #fff; }
-        .btn-primary:hover { 
-            background: var(--accent); transform: translateY(-5px); 
-            box-shadow: 0 12px 25px var(--ghost-shadow); 
-            z-index: 2; 
+        .btn-primary:hover { background: var(--accent); transform: translateY(-5px); box-shadow: 0 12px 25px var(--ghost-shadow); }
+
+        /* --- MOBILE SPECIFIC SCALING --- */
+        @media (max-width: 600px) {
+            .node-cluster {
+                width: 180px; /* Smaller cluster for mobile */
+                height: 180px;
+            }
+            .main-stage { padding-top: 120px; }
+            .satellite { width: 8px; height: 8px; top: -4px; }
+            .satellite-purple { bottom: -4px; }
         }
 
-        /* --- 404 STAGE (SYNCED SPEED) --- */
-        .main-stage { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 120px 5% 60px; position: relative; }
-        .node-cluster { position: relative; width: 220px; height: 220px; margin-bottom: 40px; }
-        .orbit { position: absolute; border: 1px solid rgba(15,17,21,0.1); border-radius: 50%; top: 50%; left: 50%; transform: translate(-50%, -50%); }
-        
-        /* Matches the background animation speed exactly */
-        .orbit-1 { width: 120px; height: 120px; animation: orbitRotate 25s linear infinite; }
-        .orbit-2 { width: 220px; height: 220px; animation: orbitRotate 35s linear infinite reverse; }
-        
-        .satellite { position: absolute; width: 12px; height: 12px; background: var(--accent); border-radius: 50%; top: -6px; left: calc(50% - 6px); box-shadow: 0 0 15px var(--accent); }
-        .satellite-purple { background: var(--purple); box-shadow: 0 0 15px var(--purple); top: auto; bottom: -6px; }
-        
-        @keyframes orbitRotate { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
-        
-        .error-title { font-family: 'Montserrat'; font-size: clamp(3.5rem, 12vw, 6rem); line-height: 0.9; letter-spacing: -5px; margin-bottom: 20px; }
-        .error-p { color: rgba(15,17,21,0.6); max-width: 440px; font-size: 1.1rem; line-height: 1.6; margin-bottom: 40px; font-weight: 500; }
-
-        /* --- FOOTER (EXACT ORIGINAL) --- */
-        footer { background: #050505; color: #fff; padding: 160px 15% 60px; position: relative; z-index: 10; border-top: 1px solid rgba(255, 255, 255, 0.05); }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 120px; }
-        .footer-brand .logo { color: #fff; font-size: 1.5rem; margin-bottom: 25px; display: block; }
-        .footer-col h4 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(255, 255, 255, 0.3); margin-bottom: 35px; font-weight: 800; }
+        /* --- FOOTER --- */
+        footer { background: #050505; color: #fff; padding: 100px 5% 60px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto 80px; }
+        .footer-brand .logo { color: #fff; font-size: 1.5rem; margin-bottom: 20px; display: block; text-decoration: none; }
+        .footer-col h4 { font-size: 0.6rem; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 25px; letter-spacing: 2px; }
         .footer-col ul { list-style: none; }
-        .footer-col ul li { margin-bottom: 18px; }
-        .footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: 0.4s ease; display: inline-block; }
-        .footer-col ul:hover li a { opacity: 0.4; }
-        .footer-col ul li a:hover { color: #ffffff; opacity: 1 !important; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
-        .footer-bottom { padding-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; }
-        .footer-bottom p { font-size: 0.65rem; color: rgba(255, 255, 255, 0.25); letter-spacing: 0.15em; font-weight: 700; text-transform: uppercase; }
-        .status-pill { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 768px) { .footer-grid { grid-template-columns: 1fr; gap: 40px; } }
+        .footer-col ul li { margin-bottom: 12px; }
+        .footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.8rem; }
+        
+        @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+        @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
@@ -131,12 +156,6 @@
 
     <header id="header">
         <a href="/" class="logo">STACKFORM</a>
-        <nav class="nav-menu">
-            <a href="/" class="nav-link">Home</a>
-            <a href="/work" class="nav-link">Work</a>
-            <a href="/about" class="nav-link">About</a>
-            <a href="/inquiry" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.7rem; border-radius: 6px;">Get Started</a>
-        </nav>
     </header>
 
     <main class="main-stage">
@@ -144,7 +163,7 @@
             <div class="orbit orbit-1"><div class="satellite"></div></div>
             <div class="orbit orbit-2"><div class="satellite satellite-purple"></div></div>
         </div>
-        <h1 class="error-title">LOST TICKET</h1>
+        <h1 class="error-title">Lost Ticket</h1>
         <p class="error-p">This path leads nowhere. Let’s get you back to the main stage.</p>
         <a href="/" class="btn btn-primary">Go Home</a>
     </main>
@@ -153,14 +172,12 @@
         <div class="footer-grid">
             <div class="footer-brand">
                 <a href="/" class="logo">STACKFORM</a>
-                <p style="color:rgba(255,255,255,0.4); font-size:0.9rem; line-height: 1.7; max-width: 300px; margin-top: 20px;">Digital studio crafting performance-driven interfaces for the next era of the web.</p>
-                <div class="status-pill" style="margin-top: 30px;"><div class="status-dot"></div>Available for Q1 2026 Projects</div>
+                <p style="color:rgba(255,255,255,0.3); font-size:0.8rem; margin-top: 15px;">Digital studio crafting performance-driven interfaces.</p>
             </div>
             <div class="footer-col">
                 <h4>Sitemap</h4>
                 <ul>
                     <li><a href="/work">Work</a></li>
-                    <li><a href="#">Services</a></li>
                     <li><a href="/about">About</a></li>
                     <li><a href="/inquiry">Contact</a></li>
                 </ul>
@@ -168,28 +185,15 @@
             <div class="footer-col">
                 <h4>Social</h4>
                 <ul>
-                    <li><a href="#">Twitter / X</a></li>
-                    <li><a href="#">LinkedIn</a></li>
+                    <li><a href="#">Twitter</a></li>
                     <li><a href="#">Instagram</a></li>
-                    <li><a href="#">Dribbble</a></li>
                 </ul>
             </div>
-            <div class="footer-col">
-                <h4>Studio</h4>
-                <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; line-height: 1.8;">Melbourne, AU<br>Remote Worldwide<br>stackformdev@gmail.com</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 STACKFORM STUDIO — ALL RIGHTS RESERVED</p>
-            <p style="opacity: 0.6;">DESIGNED BY PRECISION</p>
         </div>
     </footer>
 
     <script>
         window.addEventListener('load', () => { document.body.classList.add('loaded'); });
-        window.addEventListener('scroll', () => {
-            document.getElementById('header').classList.toggle('active', window.scrollY > 50);
-        }, { passive: true });
     </script>
 </body>
 </html>
