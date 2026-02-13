@@ -104,7 +104,7 @@
             transform: translateY(-5px); box-shadow: none; background: transparent; 
         }
 
-        /* Hero - Configured for half-square shift to the left */
+        /* Hero - Positioned further left as requested */
         .hero { 
             height: 100vh; 
             display: grid; 
@@ -114,8 +114,8 @@
         } 
         
         .hero-content {
-            grid-column: 1 / span 11;
-            margin-left: 5%; 
+            grid-column: 1 / span 10; /* Text starts at the very first grid line */
+            margin-left: 0; /* Removed previous margin to push it fully left */
         }
         
         .hero-title { 
@@ -168,12 +168,12 @@
         .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        /* Sliding Box System Styles */
+        /* Sliding Box System */
         .lead-wrapper { transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
         .side-by-side-offset { transform: translateX(-20rem); }
         [x-cloak] { display: none !important; }
 
-        /* Mobile Optimizations */
+        /* Mobile */
         @media (max-width: 900px) { 
             .mobile-toggle { display: flex; }
             .nav-menu { position: fixed; top: 0; right: -100%; width: 100%; height: 100vh; background: #fff; flex-direction: column; justify-content: center; transition: 0.6s; gap: 30px; z-index: 1050; }
