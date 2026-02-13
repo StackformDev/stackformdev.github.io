@@ -3,298 +3,575 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-    <script>
-    (function() {
-        const isMaintenance = localStorage.getItem('maintenanceMode') === 'true';
-        const isAdminPath = window.location.pathname.includes('sys-logs');
-        if (isMaintenance && !isAdminPath) {
-            window.location.replace('maintenance/');
-        }
-    })();
-    </script>
-
-    <meta name="google-site-verification" content="THTrCrHzMRlBgni9F-QEF9iwuMUwRd85f-OchFK5PJs" />
-    <title>STACKFORM - Web Engineering</title>
-    <meta name="description" content="STACKFORM (stackformdev) crafts high-performance websites that command focus.">
-
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@900&family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
-
+    <title>STACKFORM // Enterprise OS v4.5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Montserrat:wght@900&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #0F1115; 
-            --accent: #2F6BFF;  
-            --purple: #bd00ff;
-            --ghost-shadow: rgba(47, 107, 255, 0.25); 
-            --bg: #ffffff;
-            --dark-bg: #050505;
-            --h-normal: 120px; 
-            --h-scrolled: 80px;
-            --grid-line: rgba(15, 17, 21, 0.06);
-            --radius: 8px; 
+        /* UPDATED ACCENT TO CUSTOM BLUE #2F6BFF */
+        :root { --bg: #050505; --card: #0a0a0a; --accent: #2F6BFF; --purple: #bd00ff; --border: rgba(255,255,255,0.06); }
+        body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; overflow: hidden; letter-spacing: -0.01em; }
+        
+        /* REMOVE STICKY FOCUS OUTLINES */
+        *:focus { outline: none !important; box-shadow: none !important; }
+
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .glass { background: rgba(5, 5, 5, 0.75); backdrop-filter: blur(25px); -webkit-backdrop-filter: blur(25px); }
+        .linear-border { border: 1px solid var(--border); }
+        .custom-scroll::-webkit-scrollbar { width: 3px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        
+        .card-glow { transition: all 400ms cubic-bezier(.2,.85,.2,1); }
+        .card-glow:hover { 
+            border-color: rgba(47, 107, 255, 0.5); 
+            box-shadow: 0 0 40px rgba(47, 107, 255, 0.12), inset 0 0 15px rgba(47, 107, 255, 0.05); 
+            transform: translateY(-5px) scale(1.01); 
         }
 
-        /* Dark Mode Override */
-        body.dark-override { background-color: var(--dark-bg); color: #fff; }
-        body.dark-override .logo, body.dark-override .nav-link { color: #fff; }
-        body.dark-override header.active { background: rgba(5, 5, 5, 0.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(255,255,255,0.08); }
-        body.dark-override .hero-title .outline { -webkit-text-stroke: 1.5px #fff; }
-        body.dark-override .bento-card { background: rgba(255,255,255,0.03); border-color: rgba(255,255,255,0.08); color: #fff; }
-        body.dark-override .btn-secondary { color: #fff; border-color: rgba(255,255,255,0.2); }
-        body.dark-override .btn-secondary:hover { color: var(--accent); border-color: var(--accent); }
+        .nav-item { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid transparent; }
+        .nav-item:hover { padding-left: 1.5rem; color: white; }
+        .nav-item:active { transform: scale(0.97); }
 
-        html { scroll-behavior: smooth; }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background-color: var(--bg); color: var(--primary); font-family: 'Inter', sans-serif; overflow-x: hidden; transition: background 0.5s ease; }
+        .grid-bg { background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.02) 1px, transparent 0); background-size: 32px 32px; }
+        .shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent); background-size: 200% 100%; animation: shimmer 5s infinite; }
+        @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
+        [x-cloak] { display: none !important; }
 
-        /* Shutter & Background */
-        #shutter { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1), visibility 0.8s; pointer-events: none; }
-        body.loaded #shutter { opacity: 0; visibility: hidden; }
+        .page-enter { animation: slideIn 0.65s cubic-bezier(0.16, 1, 0.3, 1) both; }
+        @keyframes slideIn { from { opacity: 0; transform: translateY(15px); filter: blur(10px); } to { opacity: 1; transform: translateY(0); filter: blur(0); } }
+        
+        .stagger-1 { animation-delay: 0.1s; }
+        .stagger-2 { animation-delay: 0.2s; }
+        .stagger-3 { animation-delay: 0.3s; }
+        .stagger-4 { animation-delay: 0.4s; }
 
-        body::before {
-            content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1;
-            background-image: linear-gradient(var(--grid-line) 1px, transparent 1px), linear-gradient(90deg, var(--grid-line) 1px, transparent 1px);
-            background-size: 60px 60px;
-            mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent), linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-            -webkit-mask-image: linear-gradient(to bottom, transparent, black 15%, black 85%, transparent), linear-gradient(to right, transparent, black 15%, black 85%, transparent);
-            mask-composite: intersect; -webkit-mask-composite: source-in; pointer-events: none;
+        /* DYNAMIC ACCENT OVERRIDES */
+        .text-indigo-500, .text-indigo-400 { color: var(--accent) !important; }
+        .bg-indigo-500, .bg-indigo-600 { background-color: var(--accent) !important; }
+        .border-indigo-500\/20 { border-color: rgba(47, 107, 255, 0.2) !important; }
+        .bg-indigo-500\/10 { background-color: rgba(47, 107, 255, 0.1) !important; }
+        #particle-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 1; opacity: 0.4; }
+
+        /* TRANSITIONING STATUS GLOWS */
+        @keyframes pulse-emerald { 0%, 100% { box-shadow: 0 0 12px rgba(16, 185, 129, 0.5); } 50% { box-shadow: 0 0 20px rgba(16, 185, 129, 0.8); } }
+        @keyframes pulse-ruby { 0%, 100% { box-shadow: 0 0 12px rgba(244, 63, 94, 0.5); } 50% { box-shadow: 0 0 20px rgba(244, 63, 94, 0.8); } }
+        
+        .status-dot { transition: background-color 0.5s ease, box-shadow 0.5s ease; }
+        .glow-emerald { animation: pulse-emerald 2.5s infinite; background-color: #10b981 !important; }
+        .glow-ruby { animation: pulse-ruby 2.5s infinite; background-color: #f43f5e !important; }
+
+        /* MAINTENANCE BUTTON FINAL SPEC */
+        .maintenance-btn-final {
+            background: transparent;
+            transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+            position: relative;
+            cursor: pointer;
+        }
+        
+        .maintenance-btn-final.nominal {
+            border: 1px solid rgba(16, 185, 129, 0.3);
+            color: #10b981;
+        }
+        .maintenance-btn-final.nominal:hover {
+            transform: translateY(-5px);
+            border-color: rgba(16, 185, 129, 0.6);
+            box-shadow: 0 15px 30px rgba(16, 185, 129, 0.2), inset 0 0 15px rgba(16, 185, 129, 0.1);
         }
 
-        .leak-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; }
-        .leak { position: absolute; width: 75vw; height: 75vw; filter: blur(160px); border-radius: 50%; opacity: 0.07; animation: fluidLeak 25s infinite alternate ease-in-out; }
-        .leak-blue { background: var(--accent); top: -20%; right: -10%; }
-        .leak-purple { background: var(--purple); bottom: -20%; left: -10%; animation-delay: -5s; }
-        @keyframes fluidLeak { 0% { transform: translate(0, 0) scale(1); } 100% { transform: translate(12%, 18%) scale(1.1); } }
-
-        /* Header */
-        header { position: fixed; top: 0; width: 100%; padding: 0 5%; height: var(--h-normal); display: flex; align-items: center; justify-content: space-between; z-index: 1000; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        header.active { height: var(--h-scrolled); background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(0,0,0,0.08); }
-        .logo { font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; text-decoration: none; color: var(--primary); text-transform: uppercase; }
-        .nav-menu { display: flex; gap: 40px; align-items: center; }
-        .nav-link { text-decoration: none; color: var(--primary); font-weight: 800; font-size: 0.75rem; letter-spacing: 0.15em; position: relative; padding: 10px 0; text-transform: uppercase; }
-        .nav-link::after { content: ''; position: absolute; bottom: -2px; height: 3px; width: 0; background-color: var(--accent); right: 0; transition: width 0.4s ease; }
-        .nav-link:hover::after, .nav-link.current::after { width: 100%; left: 0; }
-
-        .mobile-toggle { display: none; cursor: pointer; z-index: 1100; width: 44px; height: 44px; align-items: center; justify-content: center; }
-        .menu-icon { width: 26px; height: 16px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
-        .menu-icon span { display: block; width: 100%; height: 2px; background-color: var(--primary); transition: 0.4s; }
-
-        /* Buttons */
-        .btn { 
-            display: inline-block; padding: 18px 36px; border-radius: var(--radius); 
-            font-weight: 800; font-size: 0.75rem; cursor: pointer; 
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1); 
-            text-decoration: none; text-transform: uppercase; letter-spacing: 1px; 
-            border: none;
+        .maintenance-btn-final.locked {
+            border: 1px solid rgba(244, 63, 94, 0.3);
+            color: #f43f5e;
         }
-        .btn-primary { background: var(--primary); color: #fff; }
-        .btn-primary:hover { background: var(--accent); transform: translateY(-5px); box-shadow: 0 12px 25px var(--ghost-shadow); }
-
-        .btn-secondary { 
-            background: transparent; color: var(--primary); 
-            border: 1px solid rgba(15, 17, 21, 0.2); 
-        }
-        .btn-secondary:hover { 
-            color: var(--accent); border-color: var(--accent); 
-            transform: translateY(-5px); box-shadow: none; background: transparent; 
+        .maintenance-btn-final.locked:hover {
+            transform: translateY(-5px);
+            border-color: rgba(244, 63, 94, 0.6);
+            box-shadow: 0 15px 30px rgba(244, 63, 94, 0.2), inset 0 0 15px rgba(244, 63, 94, 0.1);
         }
 
-        /* Hero */
-        .hero { height: 100vh; display: flex; align-items: center; padding: 0 15%; }
-        .hero-title { font-family: 'Montserrat', sans-serif; font-weight: 900; font-size: clamp(3.5rem, 8.5vw, 7.5rem); line-height: 0.95; letter-spacing: -0.05em; margin-bottom: 45px; }
-        .hero-title span, .hero-btns { display: block; opacity: 0; filter: blur(20px); transform: translateY(40px); transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
-        .hero-btns { display: flex; gap: 24px; align-items: center; }
-        .hero-title .outline { color: transparent; -webkit-text-stroke: 1.5px var(--primary); display: block; }
-        .hero-title span.animate-in, .hero-btns.animate-in { opacity: 1; filter: blur(0); transform: translateY(0); }
-
-        /* Bento */
-        .bento-grid { display: grid; grid-template-columns: repeat(12, 1fr); gap: 24px; padding: 0 15% 160px; }
-        .bento-card { grid-column: span 4; background: rgba(255,255,255,0.75); border: 1px solid rgba(0,0,0,0.08); padding: 45px; border-radius: 24px; position: relative; overflow: hidden; }
-        .bento-card.wide { grid-column: span 8; }
-        .reveal { opacity: 0; filter: blur(8px); transform: translateY(40px); transition: 1s cubic-bezier(0.16, 1, 0.3, 1); }
-        .reveal.active { opacity: 1; filter: blur(0); transform: translateY(0); }
-
-        /* Footer */
-        footer { background: #050505; color: #fff; padding: 160px 15% 60px; position: relative; z-index: 10; border-top: 1px solid rgba(255, 255, 255, 0.05); }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 120px; }
-        .footer-brand .logo { color: #fff !important; font-size: 1.5rem; margin-bottom: 25px; display: block; }
-        .footer-col h4 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(255, 255, 255, 0.3); margin-bottom: 35px; font-weight: 800; }
-        .footer-col ul { list-style: none; }
-        .footer-col ul li { margin-bottom: 18px; }
-        .footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: 0.4s ease; display: inline-block; }
-
-        .footer-col ul:hover li a { opacity: 0.3; }
-        .footer-col ul li a:hover { color: #ffffff; opacity: 1 !important; }
-
-        .footer-bottom { padding-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; }
-        .footer-bottom p { font-size: 0.65rem; color: rgba(255, 255, 255, 0.25); letter-spacing: 0.15em; font-weight: 700; text-transform: uppercase; }
-
-        .status-pill { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
-        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-        /* --- MOBILE & TABLET OPTIMIZATIONS --- */
-        @media (max-width: 1100px) {
-            .hero, .bento-grid, footer { padding-left: 8%; padding-right: 8%; }
+        .maintenance-btn-final span {
+            display: inline-block;
+            transition: none;
         }
 
-        @media (max-width: 900px) { 
-            .mobile-toggle { display: flex; }
-            .nav-menu { position: fixed; top: 0; right: -100%; width: 100%; height: 100vh; background: #fff; flex-direction: column; justify-content: center; transition: 0.6s; gap: 30px; z-index: 1050; }
-            body.dark-override .nav-menu { background: var(--dark-bg); }
-            body.dark-override .menu-icon span { background-color: #fff; }
-            .nav-menu.is-active { right: 0; }
-            
-            .hero-btns { flex-direction: column; align-items: flex-start; gap: 16px; }
-            .hero-btns .btn { width: 100%; text-align: center; }
-
-            .bento-grid { display: flex; flex-direction: column; padding-bottom: 80px; } 
-            
-            .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
-            .footer-brand { grid-column: span 2; }
-        }
-
-        @media (max-width: 600px) {
-            .hero { padding-top: 120px; height: auto; min-height: 80vh; }
-            .hero-title { font-size: 3.2rem; }
-            .footer-grid { grid-template-columns: 1fr; }
-            .footer-brand { grid-column: span 1; }
-            .footer-bottom { flex-direction: column; gap: 20px; text-align: center; }
-            .bento-card { padding: 30px; }
-        }
+        /* CUSTOM SLIDE LOGIC FOR SEPARATE BOXES */
+        .lead-box-shift { transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
+        .email-box-slide { transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1); }
     </style>
 </head>
-<body>
-    <div id="shutter"></div>
-    <div class="leak-container"><div class="leak leak-blue"></div><div class="leak leak-purple"></div></div>
+<body class="grid-bg" x-data="{ 
+    page: 'dashboard', 
+    lead: null, 
+    notifications: 0,
+    currentTime: '',
+    search: '',
+    inbox: [],
+    ghStats: { views: 0 },
+    maintenanceActive: false,
+    settings: { 
+        edgeCaching: true, 
+        aiResponse: true, 
+        apiShield: true, 
+        autoOptimize: true,
+        debugMode: false, 
+        threatDetection: true, 
+        neuralScaling: true,
+        quantumEncryption: true,
+        biometricLock: false,
+        stealthMode: false,
+        autoDefragment: true,
+        proxyTunneling: true,
+        loadBalancing: true
+    },
+    toggleMaintenance() {
+        this.maintenanceActive = !this.maintenanceActive;
+        localStorage.setItem('maintenanceMode', this.maintenanceActive);
+    },
+    async fetchGithubData() {
+        try {
+            const vRes = await fetch(`https://api.github.com/repos/stackformdev/stackformdev.github.io/traffic/views`);
+            const vData = await vRes.json();
+            this.ghStats.views = vData.count || 0;
+            if(vData.views) updateChart(vData.views);
+        } catch(e) { console.error('GitHub API Error', e); }
+    },
+    loadLeads() {
+        const data = JSON.parse(localStorage.getItem('site_inquiries') || '[]');
+        this.inbox = data;
+        this.notifications = data.filter(l => l.status === 'NEW').length;
+        this.maintenanceActive = localStorage.getItem('maintenanceMode') === 'true';
+    },
+    markAsRead(id) {
+        let current = JSON.parse(localStorage.getItem('site_inquiries') || '[]');
+        let index = current.findIndex(l => l.id === id);
+        if(index !== -1) {
+            current[index].status = 'VERIFIED';
+            localStorage.setItem('site_inquiries', JSON.stringify(current));
+            this.loadLeads();
+        }
+    },
+    deleteLead(id) {
+        let current = JSON.parse(localStorage.getItem('site_inquiries') || '[]');
+        current = current.filter(l => l.id !== id);
+        localStorage.setItem('site_inquiries', JSON.stringify(current));
+        this.loadLeads();
+    },
+    init() { 
+        setInterval(() => { this.currentTime = new Date().toLocaleTimeString() }, 1000);
+        initParticles();
+        this.loadLeads();
+        initChart();
+        this.fetchGithubData();
+        window.addEventListener('storage', () => this.loadLeads());
+    }
+}">
 
-    <header id="header">
-        <a href="./" class="logo">STACKFORM</a>
-        <div class="mobile-toggle" id="mobile-toggle">
-            <div class="menu-icon" id="menu-icon"><span></span><span></span><span></span></div>
-        </div>
-        <nav class="nav-menu" id="nav-menu">
-            <a href="./" class="nav-link current">Home</a>
-            <a href="work/" class="nav-link">Work</a>
-            <a href="about/" class="nav-link">About</a>
-            <a href="inquiry/" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.7rem; border-radius: 6px;">Get Started</a>
-        </nav>
-    </header>
+    <canvas id="particle-canvas"></canvas>
 
-    <section class="hero">
-        <div class="hero-content">
-            <h1 class="hero-title">
-                <span>Crafting</span>
-                <span>Websites that</span>
-                <span class="outline">COMMAND focus.</span>
-            </h1>
-            <div class="hero-btns">
-                <a href="work/" class="btn btn-primary">Explore Projects</a>
-                <a href="inquiry/" class="btn btn-secondary">Inquire Now</a>
+    <div class="flex h-screen w-full relative z-10 overflow-hidden">
+        <aside class="w-72 glass border-r border-white/5 flex flex-col shrink-0">
+            <div class="p-8 pb-10 flex items-center">
+                <span style="font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; color: #FFFFFF; text-transform: uppercase;">STACKFORM</span>
             </div>
-        </div>
-    </section>
+            
+            <nav class="flex-1 px-4 space-y-8 overflow-y-auto custom-scroll">
+                <div>
+                    <p class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest px-4 mb-4">Core Fleet</p>
+                    <div class="space-y-1">
+                        <template x-for="item in [
+                            {id:'dashboard', n:'Command Center', icon: 'M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2-2v-2z'},
+                            {id:'inquiries', n:'Lead Pipeline', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z'},
+                            {id:'insights', n:'Neural Insights', icon: 'M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z'}
+                        ]">
+                            <button @click="page = item.id" :class="page === item.id ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'text-zinc-500 border-transparent'" class="nav-item w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-xs font-bold transition-all border">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon"></path></svg>
+                                <span x-text="item.n"></span>
+                                <template x-if="item.id === 'inquiries' && notifications > 0">
+                                    <span class="ml-auto bg-rose-500 text-white text-[9px] px-1.5 py-0.5 rounded-md" x-text="notifications"></span>
+                                </template>
+                            </button>
+                        </template>
+                    </div>
+                </div>
 
-    <div class="bento-grid">
-        <div class="bento-card wide reveal">
-            <h3 style="margin-bottom: 15px; font-size: 1.5rem; letter-spacing: -1px;">Precision Engineering</h3>
-            <p style="color: rgba(15,17,21,0.6); line-height: 1.6;">Infrastructure designed for conversion. We merge high-velocity code with pixel-perfect design standards to ensure your digital footprint is permanent.</p>
-        </div>
-        <div class="bento-card reveal">
-            <h3 style="margin-bottom: 15px; font-size: 1.5rem; letter-spacing: -1px;">Visual Narrative</h3>
-            <p style="color: rgba(15,17,21,0.6); line-height: 1.6;">Directing user focus through strategic hierarchy and intentional motion.</p>
+                <div>
+                    <p class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest px-4 mb-4">Security & Logs</p>
+                    <div class="space-y-1">
+                        <template x-for="item in [
+                            {id:'firewall', n:'Threat Shield', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'},
+                            {id:'logs', n:'System Console', icon: 'M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'},
+                            {id:'settings', n:'Infrastructure', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'}
+                        ]">
+                            <button @click="page = item.id" :class="page === item.id ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'text-zinc-500 border-transparent'" class="nav-item w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-xs font-bold transition-all border">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon"></path></svg>
+                                <span x-text="item.n"></span>
+                            </button>
+                        </template>
+                    </div>
+                </div>
+            </nav>
+
+            <div class="p-6 border-t border-white/5">
+                <div class="flex items-center gap-3 bg-indigo-500/5 p-4 rounded-2xl border border-indigo-500/10">
+                    <div class="w-10 h-10 rounded-xl bg-indigo-600 flex items-center justify-center font-bold text-xs shadow-lg">AD</div>
+                    <div>
+                        <p class="text-[11px] font-bold">Admin_Node_04</p>
+                        <p class="text-[9px] text-indigo-400 font-bold uppercase tracking-widest" x-text="currentTime"></p>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 flex flex-col min-w-0 bg-[#050505]">
+            <header class="h-20 border-b border-white/5 flex items-center justify-between px-10 glass shrink-0 relative z-20">
+                <div class="relative w-full max-w-md group">
+                    <input type="text" x-model="search" placeholder="Search system resources..." class="bg-white/5 border border-white/5 rounded-xl pl-12 pr-4 py-2.5 text-xs w-full focus:outline-none focus:border-indigo-500/50 transition-all focus:ring-1 focus:ring-indigo-500/30">
+                    <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+                <div class="flex items-center gap-6">
+                    <button class="relative p-2 rounded-lg hover:bg-white/5 transition-colors active:scale-90">
+                        <span x-show="notifications > 0" class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
+                        <svg class="w-6 h-6 text-zinc-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" stroke-width="1.5"></path></svg>
+                    </button>
+                </div>
+            </header>
+
+            <div class="flex-1 overflow-y-auto custom-scroll p-10 space-y-12 pb-32">
+                
+                <div x-show="page === 'dashboard'" x-cloak class="page-enter space-y-12">
+                    <div class="flex justify-between items-end">
+                        <div class="stagger-1">
+                            <h2 class="text-5xl font-extrabold tracking-tighter">Systems <span class="text-indigo-500">Hub</span></h2>
+                            <p class="text-zinc-500 mt-2 font-medium">Real-time status of your global decentralized network.</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                        <div class="p-8 rounded-[2rem] linear-border bg-zinc-900/20 card-glow relative overflow-hidden group stagger-1 page-enter">
+                            <p class="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-4">Website Clicks</p>
+                            <h2 class="text-4xl font-bold tracking-tighter" x-text="ghStats.views || '---'"></h2>
+                            <span class="text-[9px] text-indigo-400 font-black uppercase mt-4 block">LIVE REPO VIEWS</span>
+                        </div>
+                        <template x-for="(s, index) in [
+                            {l: 'Neural Compute', v: '92.4 TFLOPS', u: 'Peak', c: 'purple'},
+                            {l: 'Live Leads', v: inbox.length, u: notifications + ' New', c: 'emerald'},
+                            {l: 'Threats Blocked', v: '1,042', u: 'Safe', c: 'rose'}
+                        ]">
+                            <div :class="'stagger-' + (index + 2)" class="p-8 rounded-[2rem] linear-border bg-zinc-900/20 card-glow relative overflow-hidden group page-enter">
+                                <p class="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em] mb-4" x-text="s.l"></p>
+                                <h2 class="text-4xl font-bold tracking-tighter" x-text="s.v"></h2>
+                                <div class="flex items-center gap-2 mt-6">
+                                    <span :class="s.c === 'purple' ? 'bg-[#bd00ff]/10 text-[#bd00ff] border-[#bd00ff]/20' : `bg-${s.c}-500/10 text-${s.c}-400 border-${s.c}-500/20`" class="text-[9px] px-2 py-1 rounded-lg border font-black uppercase" x-text="s.u"></span>
+                                </div>
+                            </div>
+                        </template>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
+                        <div class="xl:col-span-2 p-10 rounded-[2.5rem] linear-border bg-gradient-to-br from-zinc-900/40 to-black h-[480px] flex flex-col relative overflow-hidden stagger-3 page-enter">
+                            <div class="shimmer absolute inset-0 opacity-10"></div>
+                            <h3 class="font-black text-xl mb-8">Interaction Density (Real Data)</h3>
+                            <div class="flex-1 relative z-10">
+                                <canvas id="interactionChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="p-8 rounded-[2.5rem] linear-border bg-zinc-900/10 space-y-8 stagger-4 page-enter">
+                            <h3 class="text-[10px] font-black text-zinc-600 uppercase tracking-widest">Live Node Health</h3>
+                            <div class="space-y-6">
+                                <template x-for="node in [{n:'Frankfurt-01', s:98, t:'Stable'}, {n:'Singapore-04', s:42, t:'Heavy Load'}, {n:'US-East-09', s:99, t:'Optimal'}]">
+                                    <div class="space-y-2 group cursor-pointer">
+                                        <div class="flex justify-between items-end"><span class="text-xs font-bold text-zinc-400 group-hover:text-white transition-colors" x-text="node.n"></span><span class="text-[9px] font-black uppercase text-indigo-400" x-text="node.t"></span></div>
+                                        <div class="w-full h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                            <div class="h-full bg-indigo-500 transition-all duration-1000" :style="`width: ${node.s}%`"></div>
+                                        </div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div x-show="page === 'inquiries'" x-cloak class="page-enter space-y-10">
+                    <h2 class="text-5xl font-extrabold tracking-tighter">Inbound <span class="text-indigo-500">Pipeline</span></h2>
+                    <div class="linear-border rounded-[2.5rem] bg-zinc-900/20 overflow-hidden backdrop-blur-xl">
+                        <table class="w-full text-left">
+                            <thead class="border-b border-white/5 text-[10px] font-black text-zinc-600 uppercase tracking-[0.2em] bg-white/[0.02]">
+                                <tr>
+                                    <th class="p-8">Entity Identity</th>
+                                    <th class="p-8">Service Type</th>
+                                    <th class="p-8">Status</th>
+                                    <th class="p-8 text-right pr-12"></th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                <template x-if="inbox.length === 0">
+                                    <tr><td colspan="4" class="p-20 text-center text-zinc-600 font-bold uppercase text-[10px] tracking-widest">Waiting for transmissions...</td></tr>
+                                </template>
+                                <template x-for="l in inbox" :key="l.id">
+                                    <tr class="hover:bg-white/[0.04] transition-colors cursor-pointer group" @click="lead = l; if(l.status === 'NEW') markAsRead(l.id)">
+                                        <td class="p-8">
+                                            <div class="flex items-center gap-4 truncate">
+                                                <div class="shrink-0 w-12 h-12 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center font-black text-indigo-400 group-hover:bg-indigo-500 group-hover:text-white transition-all" x-text="l.name.charAt(0)"></div>
+                                                <div class="truncate"><p class="font-bold text-sm text-white" x-text="l.name"></p><p class="text-[10px] text-zinc-500 font-mono" x-text="l.email"></p></div>
+                                            </div>
+                                        </td>
+                                        <td class="p-8 text-[10px] font-black text-zinc-400 uppercase tracking-widest" x-text="l.service"></td>
+                                        <td class="p-8"><span :class="l.status === 'NEW' ? 'border-rose-500/20 text-rose-400 bg-rose-500/10' : 'border-emerald-500/20 text-emerald-400 bg-emerald-500/10'" class="px-4 py-1.5 rounded-full text-[9px] font-black uppercase tracking-widest border" x-text="l.status"></span></td>
+                                        <td class="p-8 text-right pr-12"><svg class="w-4 h-4 ml-auto group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg></td>
+                                    </tr>
+                                </template>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div x-show="page === 'insights'" x-cloak class="page-enter space-y-12">
+                    <h2 class="text-5xl font-extrabold tracking-tighter">Neural <span class="text-indigo-500">Insights</span></h2>
+                    <p class="text-zinc-500">Advanced analytics and predictive modeling.</p>
+                </div>
+
+                <div x-show="page === 'firewall'" x-cloak class="page-enter space-y-12">
+                    <h2 class="text-5xl font-extrabold tracking-tighter">Threat <span class="text-rose-500">Shield</span></h2>
+                    <div class="p-10 rounded-[2.5rem] border border-rose-500/20 bg-rose-500/5 relative overflow-hidden group hover:bg-rose-500/10 transition-colors">
+                        <h3 class="text-2xl font-bold mb-4">Firewall Level: 09</h3>
+                        <p class="text-sm text-zinc-500 leading-relaxed max-w-sm">Mitigating active intrusion attempts.</p>
+                        <button class="px-6 py-3 bg-rose-600 hover:bg-rose-500 active:scale-95 transition-all rounded-xl text-[10px] font-black uppercase mt-8">Isolate Threats</button>
+                    </div>
+                </div>
+
+                <div x-show="page === 'logs'" x-cloak class="page-enter space-y-12">
+                    <h2 class="text-5xl font-extrabold tracking-tighter">System <span class="text-zinc-400">Console</span></h2>
+                    <div class="bg-black/40 p-6 rounded-2xl border border-white/5 mono text-xs text-emerald-500 h-96 overflow-y-auto custom-scroll">
+                        <p>> System initialized...</p>
+                        <p>> Uplink secure...</p>
+                        <p>> Waiting for user command...</p>
+                    </div>
+                </div>
+
+                <div x-show="page === 'settings'" x-cloak class="page-enter space-y-12">
+                    <div class="flex justify-between items-end">
+                        <div class="stagger-1">
+                            <h2 class="text-5xl font-extrabold tracking-tighter">Core <span class="text-indigo-500">Config</span></h2>
+                            <p class="text-zinc-500 mt-2 font-medium">Control decentralized nodes and system-wide protocols.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="stagger-2">
+                        <button 
+                            @click="toggleMaintenance()" 
+                            :class="maintenanceActive ? 'locked' : 'nominal'"
+                            class="maintenance-btn-final w-full py-8 rounded-[1.5rem] flex items-center justify-center group"
+                        >
+                            <span class="font-black text-[11px] uppercase tracking-[0.5em]" x-text="maintenanceActive ? 'MAINTENANCE_ACTIVE // SYSTEM_LOCKED' : 'SYSTEM_NOMINAL // TRAFFIC_UNRESTRICTED'"></span>
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 xl:grid-cols-12 gap-10">
+                        <div class="xl:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-4 stagger-3">
+                            <template x-for="(v, k) in settings">
+                                <template x-if="typeof v === 'boolean'">
+                                    <button 
+                                        @click="settings[k] = !settings[k]" 
+                                        class="p-8 rounded-[2rem] border border-white/5 bg-white/[0.01] hover:bg-white/[0.03] transition-all flex items-center justify-between group active:scale-95"
+                                    >
+                                        <div class="flex flex-col items-start gap-1">
+                                            <span class="text-[10px] font-black uppercase tracking-widest text-zinc-500 group-hover:text-zinc-300 transition-colors" x-text="k.replace(/([A-Z])/g, ' $1')"></span>
+                                            <span class="text-[9px] font-bold text-indigo-500/50 uppercase" x-text="settings[k] ? 'Active' : 'Standby'"></span>
+                                        </div>
+                                        <div 
+                                            :class="settings[k] ? 'glow-emerald' : 'glow-ruby'" 
+                                            class="status-dot w-2.5 h-2.5 rounded-full"
+                                        ></div>
+                                    </button>
+                                </template>
+                            </template>
+                        </div>
+
+                        <div class="xl:col-span-4 space-y-10 stagger-4">
+                            <div class="p-10 rounded-[3rem] linear-border bg-gradient-to-b from-indigo-500/5 to-transparent space-y-10">
+                                <div>
+                                    <p class="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-6">System Vitals</p>
+                                    <div class="space-y-8">
+                                        <div class="space-y-3">
+                                            <div class="flex justify-between text-[10px] font-bold uppercase tracking-tighter">
+                                                <span class="text-zinc-400">Neural Load</span>
+                                                <span class="text-indigo-400">42%</span>
+                                            </div>
+                                            <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                                <div class="h-full bg-indigo-500 w-[42%] shadow-[0_0_10px_rgba(47,107,255,0.5)]"></div>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-3">
+                                            <div class="flex justify-between text-[10px] font-bold uppercase tracking-tighter">
+                                                <span class="text-zinc-400">Memory Cluster</span>
+                                                <span class="text-indigo-400">68%</span>
+                                            </div>
+                                            <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                                <div class="h-full bg-indigo-500 w-[68%] shadow-[0_0_10px_rgba(47,107,255,0.5)]"></div>
+                                            </div>
+                                        </div>
+                                        <div class="space-y-3">
+                                            <div class="flex justify-between text-[10px] font-bold uppercase tracking-tighter">
+                                                <span class="text-zinc-400">Network Latency</span>
+                                                <span class="text-emerald-400">12ms</span>
+                                            </div>
+                                            <div class="h-1 w-full bg-white/5 rounded-full overflow-hidden">
+                                                <div class="h-full bg-emerald-500 w-[15%] shadow-[0_0_10px_rgba(16,185,129,0.5)]"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="pt-6 border-t border-white/5">
+                                    <p class="text-[10px] font-black text-zinc-500 uppercase tracking-[0.3em] mb-4">Encryption Node</p>
+                                    <div class="p-4 rounded-2xl bg-black/40 border border-white/5 font-mono text-[10px] text-zinc-500 break-all leading-relaxed">
+                                        RSA_V4_SECURE_LINK::STACKFORM_0x4F2A...
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+
+        <div x-show="lead" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-6" x-data="{ outreachMode: false, subject: '', body: '' }">
+            <div @click="lead = null; outreachMode = false" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
+            
+            <div class="relative w-full h-full flex items-center justify-center max-w-7xl overflow-hidden">
+                
+                <div :class="outreachMode ? '-translate-x-40 opacity-40 scale-95 blur-sm' : 'translate-x-0 opacity-100 scale-100 blur-0'"
+                     class="lead-box-shift relative w-full max-w-2xl bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col max-h-[85vh] z-20 overflow-hidden">
+                    <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                        <div class="flex items-center gap-6">
+                            <div class="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-2xl font-black" x-text="lead ? lead.name.charAt(0) : ''"></div>
+                            <div>
+                                <span class="text-[10px] font-black text-indigo-500 uppercase tracking-[0.3em]">TRANSMISSION_DATA</span>
+                                <h2 class="text-3xl font-bold tracking-tighter" x-text="lead ? lead.name : ''"></h2>
+                            </div>
+                        </div>
+                        <button @click="lead = null; outreachMode = false" class="p-3 hover:bg-white/5 rounded-full text-zinc-500">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                        </button>
+                    </div>
+                    <div class="p-10 space-y-8 overflow-y-auto custom-scroll">
+                        <div class="grid grid-cols-2 gap-6">
+                            <div><p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Email</p><p class="text-sm font-medium text-white break-all" x-text="lead ? lead.email : ''"></p></div>
+                            <div><p class="text-[10px] font-black text-zinc-500 uppercase tracking-widest mb-2">Service</p><p class="text-xs font-black text-indigo-400 uppercase" x-text="lead ? lead.service : ''"></p></div>
+                        </div>
+                        <div class="p-8 bg-zinc-900/50 border border-white/5 rounded-[2rem] text-zinc-300 italic min-h-[200px]">
+                            "<span x-text="lead ? lead.message : ''"></span>"
+                        </div>
+                        <button @click="outreachMode = true" class="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] shadow-lg shadow-indigo-500/20 transition-all">Initialize Outreach</button>
+                    </div>
+                </div>
+
+                <button x-show="outreachMode" 
+                        x-transition:enter="transition duration-500 delay-500 opacity-0" 
+                        x-transition:enter-end="opacity-100"
+                        @click="outreachMode = false" 
+                        class="absolute left-[20%] top-1/2 -translate-y-1/2 p-6 text-indigo-400 hover:text-white transition-all z-[100]">
+                    <svg class="w-14 h-14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+
+                <div x-show="outreachMode"
+                     x-transition:enter="transition duration-700 ease-out opacity-0 translate-x-full" 
+                     x-transition:enter-end="opacity-100 translate-x-20"
+                     x-transition:leave="transition duration-500 ease-in opacity-0 translate-x-full"
+                     class="email-box-slide absolute w-full max-w-2xl bg-[#0d0d0d] border border-indigo-500/30 rounded-[2.5rem] shadow-[0_0_80px_rgba(47,107,255,0.1)] flex flex-col max-h-[85vh] z-[110]">
+                    <div class="p-8 border-b border-white/5 bg-indigo-500/[0.02]">
+                        <span class="text-[10px] font-black text-indigo-400 uppercase tracking-[0.3em]">OUTREACH_INTERFACE_v4.5</span>
+                        <h2 class="text-3xl font-bold tracking-tighter">Compose Dispatch</h2>
+                    </div>
+                    <div class="p-10 space-y-6">
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Recipient Node</label>
+                            <input type="text" :value="lead ? lead.email : ''" readonly class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-zinc-400 cursor-not-allowed">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Subject Line</label>
+                            <input type="text" x-model="subject" placeholder="Enter transmission subject..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-all">
+                        </div>
+                        <div class="space-y-2">
+                            <label class="text-[10px] font-black text-zinc-500 uppercase tracking-widest">Response Payload</label>
+                            <textarea x-model="body" rows="8" placeholder="Type your message..." class="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:border-indigo-500 outline-none transition-all resize-none custom-scroll"></textarea>
+                        </div>
+                        <button @click="window.location.href = `mailto:${lead.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`" 
+                                class="w-full py-5 bg-indigo-600 hover:bg-indigo-500 text-white rounded-2xl text-xs font-black uppercase tracking-[0.2em] shadow-lg shadow-indigo-500/20 transition-all">
+                            Dispatch Transmission
+                        </button>
+                    </div>
+                </div>
+
+            </div>
         </div>
     </div>
 
-    <footer>
-        <div class="footer-grid">
-            <div class="footer-brand">
-                <a href="./" class="logo">STACKFORM</a>
-                <p style="color:rgba(255,255,255,0.4); font-size:0.9rem; line-height: 1.7; max-width: 300px; margin-top: 20px;">Digital studio crafting performance-driven interfaces for the next era of the web.</p>
-                <div class="status-pill" style="margin-top: 30px;"><div class="status-dot"></div>Available for Q1 2026 Projects</div>
-            </div>
-            <div class="footer-col">
-                <h4>Sitemap</h4>
-                <ul>
-                    <li><a href="work/">Work</a></li>
-                    <li><a href="#">Services</a></li>
-                    <li><a href="about/">About</a></li>
-                    <li><a href="inquiry/">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Social</h4>
-                <ul>
-                    <li><a href="#">Twitter / X</a></li>
-                    <li><a href="#">LinkedIn</a></li>
-                    <li><a href="#">Instagram</a></li>
-                </ul>
-            </div>
-            <div class="footer-col">
-                <h4>Studio</h4>
-                <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; line-height: 1.8;">Melbourne, AU<br>Remote Worldwide<br>stackformdev@gmail.com</p>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2026 STACKFORM STUDIO — ALL RIGHTS RESERVED</p>
-            <p style="opacity: 0.6;">DESIGNED BY PRECISION</p>
-        </div>
-    </footer>
-
     <script>
-        window.addEventListener('DOMContentLoaded', () => {
-            const s = JSON.parse(localStorage.getItem('site_settings') || '{}');
-            if (s.darkMode) document.body.classList.add('dark-override');
-            if (s.showBar && s.announcement) {
-                const bar = document.createElement('div');
-                bar.style = "background:var(--accent); color:white; text-align:center; padding:8px; font-size:0.65rem; font-weight:900; letter-spacing:2px; position:fixed; top:0; width:100%; z-index:2000;";
-                bar.innerText = s.announcement.toUpperCase();
-                document.body.prepend(bar);
-                document.getElementById('header').style.top = '30px';
-            }
-        });
-
-        const mobileToggle = document.getElementById('mobile-toggle');
-        const navMenu = document.getElementById('nav-menu');
-
-        mobileToggle.addEventListener('click', () => {
-            navMenu.classList.toggle('is-active');
-            document.body.style.overflow = navMenu.classList.contains('is-active') ? 'hidden' : 'auto';
-        });
-
-        // Close menu when clicking links
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', () => {
-                navMenu.classList.remove('is-active');
-                document.body.style.overflow = 'auto';
-            });
-        });
-
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('active');
-                    revealObserver.unobserve(entry.target);
+        let myChart;
+        function initChart() {
+            const ctx = document.getElementById('interactionChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: Array(14).fill(''),
+                    datasets: [{
+                        data: Array(14).fill(0).map(() => Math.floor(Math.random() * 20)),
+                        borderColor: '#2F6BFF',
+                        backgroundColor: 'rgba(47, 107, 255, 0.1)',
+                        borderWidth: 4,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { x: { display: false }, y: { grid: { color: 'rgba(255,255,255,0.02)' }, ticks: { display: false } } }
                 }
             });
-        }, { threshold: 0.15 });
-
-        window.addEventListener('load', () => { 
-             document.body.classList.add('loaded'); 
-             document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
-            setTimeout(() => {
-                document.querySelectorAll('.hero-title span').forEach((span, i) => {
-                    setTimeout(() => span.classList.add('animate-in'), i * 120);
-                });
-                setTimeout(() => document.querySelector('.hero-btns')?.classList.add('animate-in'), 300);
-            }, 400);
-        });
-
-        window.addEventListener('scroll', () => {
-            document.getElementById('header').classList.toggle('active', window.scrollY > 50);
-        }, { passive: true });
+        }
+        function updateChart(views) {
+            if(!myChart) return;
+            myChart.data.labels = views.map(v => v.timestamp.split('T')[0]);
+            myChart.data.datasets[0].data = views.map(v => v.count);
+            myChart.update();
+        }
+        function initParticles() {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+            function resize() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
+            window.addEventListener('resize', resize);
+            resize();
+            class Particle {
+                constructor() { this.reset(); }
+                reset() {
+                    this.x = Math.random() * canvas.width; this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 1.5; this.speedX = (Math.random() - 0.5) * 0.3;
+                    this.speedY = (Math.random() - 0.5) * 0.3; this.life = Math.random() * 0.4;
+                }
+                update() {
+                    this.x += this.speedX; this.y += this.speedY;
+                    if (this.x > canvas.width || this.x < 0 || this.y > canvas.height || this.y < 0) this.reset();
+                }
+                draw() {
+                    ctx.fillStyle = `rgba(47, 107, 255, ${this.life})`;
+                    ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill();
+                }
+            }
+            for (let i = 0; i < 60; i++) particles.push(new Particle());
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(animate);
+            }
+            animate();
+        }
     </script>
 </body>
 </html>
