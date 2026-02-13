@@ -10,7 +10,6 @@
         const isAdminPath = window.location.pathname.includes('sys-logs');
         
         if (isMaintenance && !isAdminPath) {
-            // FIXED: Points to the maintenance folder relative to this subfolder
             window.location.replace('../maintenance/');
         }
     })();
@@ -104,23 +103,27 @@
         .btn-primary { background: var(--primary); color: #fff; }
         .btn-primary:hover { background: var(--accent); transform: translateY(-5px); box-shadow: 0 12px 25px var(--ghost-shadow); }
 
-        /* --- FOOTER --- */
+        /* --- FOOTER (EXACT SYNC FROM HOME PAGE) --- */
         footer { background: #050505; color: #fff; padding: 160px 10% 60px; position: relative; z-index: 10; border-top: 1px solid rgba(255, 255, 255, 0.05); }
         .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 120px; }
-        .footer-brand .logo { color: #fff; font-size: 1.5rem; margin-bottom: 25px; display: block; }
+        .footer-brand .logo { color: #fff !important; font-size: 1.5rem; margin-bottom: 25px; display: block; }
         .footer-col h4 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(255, 255, 255, 0.3); margin-bottom: 35px; font-weight: 800; }
         .footer-col ul { list-style: none; }
         .footer-col ul li { margin-bottom: 18px; }
         .footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: 0.4s ease; display: inline-block; }
-        .footer-col ul li a:hover { color: #ffffff; text-shadow: 0 0 15px rgba(255,255,255,0.3); }
+
+        .footer-col ul:hover li a { opacity: 0.3; }
+        .footer-col ul li a:hover { color: #ffffff; opacity: 1 !important; }
+
         .footer-bottom { padding-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; }
         .footer-bottom p { font-size: 0.65rem; color: rgba(255, 255, 255, 0.25); letter-spacing: 0.15em; font-weight: 700; text-transform: uppercase; }
+
         .status-pill { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
         .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
         @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
 
-        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; } .about-intro { grid-template-columns: 1fr; gap: 40px; } }
-        @media (max-width: 900px) { .bento-grid { display: flex; flex-direction: column; } .footer-grid { grid-template-columns: 1fr; gap: 40px; } .marquee-item { font-size: 2.5rem; } }
+        @media (max-width: 1024px) { .footer-grid { grid-template-columns: 1fr 1fr; gap: 60px; } .about-intro { grid-template-columns: 1fr; gap: 40px; } }
+        @media (max-width: 900px) { .bento-grid { display: flex; flex-direction: column; } .footer-grid { grid-template-columns: 1fr; gap: 50px; } .marquee-item { font-size: 2.5rem; } }
     </style>
 </head>
 <body>
@@ -191,7 +194,7 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-brand">
-                <a href="../" class="logo">STACKFORM</a>
+                <a href="./" class="logo">STACKFORM</a>
                 <p style="color:rgba(255,255,255,0.4); font-size:0.9rem; line-height: 1.7; max-width: 300px; margin-top: 20px;">Digital studio crafting performance-driven interfaces for the next era of the web.</p>
                 <div class="status-pill" style="margin-top: 30px;"><div class="status-dot"></div>Available for Q1 2026 Projects</div>
             </div>
@@ -199,6 +202,7 @@
                 <h4>Sitemap</h4>
                 <ul>
                     <li><a href="../work/">Work</a></li>
+                    <li><a href="#">Services</a></li>
                     <li><a href="./">About</a></li>
                     <li><a href="../inquiry/">Contact</a></li>
                 </ul>
@@ -206,9 +210,10 @@
             <div class="footer-col">
                 <h4>Social</h4>
                 <ul>
+                    <li><a href="#">Twitter / X</a></li>
                     <li><a href="#">LinkedIn</a></li>
                     <li><a href="#">Instagram</a></li>
-                    <li><a href="#">Dribbble</a></li>
+                    <li><a href="https://dribbble.com/stackformdev" target="_blank">Dribbble</a></li>
                 </ul>
             </div>
             <div class="footer-col">
@@ -226,7 +231,6 @@
         window.addEventListener('load', () => {
             document.body.classList.add('loaded');
             
-            // Intersection Observer for Bento Cards
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach((entry, i) => {
                     if (entry.isIntersecting) {
