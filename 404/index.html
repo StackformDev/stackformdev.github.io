@@ -8,9 +8,7 @@
     (function() {
         const isMaintenance = localStorage.getItem('maintenanceMode') === 'true';
         const isAdminPath = window.location.pathname.includes('sys-logs');
-        
         if (isMaintenance && !isAdminPath) {
-            // Redirects to maintenance folder if active
             window.location.replace('../maintenance/');
         }
     })();
@@ -29,6 +27,7 @@
             --purple: #bd00ff;
             --ghost-shadow: rgba(47, 107, 255, 0.25); 
             --bg: #ffffff;
+            --dark-bg: #050505;
             --h-normal: 120px; 
             --h-scrolled: 80px;
             --grid-line: rgba(15, 17, 21, 0.06);
@@ -39,12 +38,7 @@
         body { background-color: var(--bg); color: var(--primary); font-family: 'Inter', sans-serif; overflow-x: hidden; }
 
         /* --- SHUTTER --- */
-        #shutter {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--primary); z-index: 9999;
-            transition: opacity 0.8s cubic-bezier(0.65, 0, 0.35, 1), visibility 0.8s;
-            pointer-events: none;
-        }
+        #shutter { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--primary); z-index: 9999; transition: opacity 0.8s; pointer-events: none; }
         body.loaded #shutter { opacity: 0; visibility: hidden; }
 
         /* --- BACKGROUND --- */
@@ -57,101 +51,82 @@
             mask-composite: intersect; -webkit-mask-composite: source-in; pointer-events: none;
         }
 
-        .leak-container { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; 
-            animation: masterRotate 25s linear infinite;
-        }
+        .leak-container { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; pointer-events: none; animation: masterRotate 25s linear infinite; }
         .leak { position: absolute; width: 80vw; height: 80vw; filter: blur(160px); border-radius: 50%; opacity: 0.08; }
         .leak-blue { background: var(--accent); top: -20%; right: -10%; }
         .leak-purple { background: var(--purple); bottom: -20%; left: -10%; }
-
-        @keyframes masterRotate {
-            from { transform: rotate(0deg) scale(1); }
-            50% { transform: rotate(180deg) scale(1.1); }
-            to { transform: rotate(360deg) scale(1); }
-        }
+        @keyframes masterRotate { from { transform: rotate(0deg); } 50% { transform: rotate(180deg) scale(1.1); } to { transform: rotate(360deg); } }
 
         /* --- HEADER --- */
         header { position: fixed; top: 0; width: 100%; padding: 0 5%; height: var(--h-normal); display: flex; align-items: center; justify-content: space-between; z-index: 1000; transition: 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
-        .logo { font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; text-decoration: none; color: var(--primary); text-transform: uppercase; z-index: 1101; }
-        
+        header.active { height: var(--h-scrolled); background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(30px); border-bottom: 1px solid rgba(0,0,0,0.08); }
+        .logo { font-family: 'Montserrat'; font-weight: 900; font-size: 1.8rem; letter-spacing: -2px; text-decoration: none; color: var(--primary); text-transform: uppercase; }
+        .nav-menu { display: flex; gap: 40px; align-items: center; }
+        .nav-link { text-decoration: none; color: var(--primary); font-weight: 800; font-size: 0.75rem; letter-spacing: 0.15em; position: relative; padding: 10px 0; text-transform: uppercase; }
+        .nav-link::after { content: ''; position: absolute; bottom: -2px; height: 3px; width: 0; background-color: var(--accent); right: 0; transition: width 0.4s ease; }
+        .nav-link:hover::after { width: 100%; left: 0; }
+        .mobile-toggle { display: none; cursor: pointer; z-index: 1100; width: 44px; height: 44px; align-items: center; justify-content: center; }
+        .menu-icon { width: 26px; height: 16px; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
+        .menu-icon span { display: block; width: 100%; height: 2px; background-color: var(--primary); transition: 0.4s; }
+
         /* --- 404 STAGE --- */
         .main-stage { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 160px 5% 80px; position: relative; }
-        
-        .node-cluster { 
-            position: relative; 
-            width: 280px; 
-            height: 280px; 
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .orbit { 
-            position: absolute; 
-            border: 1px solid rgba(15,17,21,0.08); 
-            border-radius: 50%; 
-            display: flex;
-            justify-content: center;
-        }
-        
+        .node-cluster { position: relative; width: 280px; height: 280px; margin-bottom: 20px; display: flex; align-items: center; justify-content: center; }
+        .orbit { position: absolute; border: 1px solid rgba(15,17,21,0.08); border-radius: 50%; display: flex; justify-content: center; }
         .orbit-1 { width: 50%; height: 50%; animation: orbitRotate 20s linear infinite; }
         .orbit-2 { width: 100%; height: 100%; animation: orbitRotate 30s linear infinite reverse; }
-        
-        .satellite { 
-            position: absolute; 
-            width: 10px; 
-            height: 10px; 
-            background: var(--accent); 
-            border-radius: 50%; 
-            top: -5px; 
-            box-shadow: 0 0 15px var(--accent); 
-        }
-        .satellite-purple { 
-            background: var(--purple); 
-            box-shadow: 0 0 15px var(--purple); 
-            top: auto; 
-            bottom: -5px; 
-        }
-        
+        .satellite { position: absolute; width: 10px; height: 10px; background: var(--accent); border-radius: 50%; top: -5px; box-shadow: 0 0 15px var(--accent); }
+        .satellite-purple { background: var(--purple); box-shadow: 0 0 15px var(--purple); top: auto; bottom: -5px; }
         @keyframes orbitRotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        
         .error-title { font-family: 'Montserrat'; font-size: clamp(3rem, 12vw, 6rem); line-height: 0.9; letter-spacing: -4px; margin-bottom: 20px; text-transform: uppercase; }
         .error-p { color: rgba(15,17,21,0.6); max-width: 440px; font-size: clamp(0.9rem, 3vw, 1.1rem); line-height: 1.6; margin-bottom: 40px; font-weight: 500; }
-
-        .btn { display: inline-block; padding: 18px 36px; border-radius: var(--radius); font-weight: 800; font-size: 0.75rem; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: 0.4s; }
-        .btn-primary { background: var(--primary); color: #fff; border: none; cursor: pointer; }
+        .btn { display: inline-block; padding: 18px 36px; border-radius: var(--radius); font-weight: 800; font-size: 0.75rem; text-decoration: none; text-transform: uppercase; letter-spacing: 1px; transition: 0.4s; border: none; cursor: pointer; }
+        .btn-primary { background: var(--primary); color: #fff; }
         .btn-primary:hover { background: var(--accent); transform: translateY(-5px); box-shadow: 0 12px 25px var(--ghost-shadow); }
 
-        @media (max-width: 600px) {
-            .node-cluster { width: 180px; height: 180px; }
-            .main-stage { padding-top: 120px; }
-        }
-
         /* --- FOOTER --- */
-        footer { background: #050505; color: #fff; padding: 100px 5% 60px; border-top: 1px solid rgba(255, 255, 255, 0.05); }
-        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; max-width: 1200px; margin: 0 auto 80px; }
-        .footer-brand .logo { color: #fff; font-size: 1.5rem; margin-bottom: 20px; display: block; text-decoration: none; }
-        .footer-col h4 { font-size: 0.6rem; text-transform: uppercase; color: rgba(255,255,255,0.3); margin-bottom: 25px; letter-spacing: 2px; }
+        footer { background: #050505; color: #fff; padding: 160px 10% 60px; position: relative; z-index: 10; border-top: 1px solid rgba(255, 255, 255, 0.05); }
+        .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 60px; margin-bottom: 120px; }
+        .footer-brand .logo { color: #fff !important; font-size: 1.5rem; margin-bottom: 25px; display: block; }
+        .footer-col h4 { font-size: 0.65rem; text-transform: uppercase; letter-spacing: 0.25em; color: rgba(255, 255, 255, 0.3); margin-bottom: 35px; font-weight: 800; }
         .footer-col ul { list-style: none; }
-        .footer-col ul li { margin-bottom: 12px; }
-        .footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.8rem; transition: 0.3s; }
-        .footer-col ul li a:hover { color: #fff; }
+        .footer-col ul li { margin-bottom: 18px; }
+        .footer-col ul li a { color: rgba(255,255,255,0.5); text-decoration: none; font-size: 0.85rem; font-weight: 500; transition: 0.4s ease; display: inline-block; }
         
-        @media (max-width: 900px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
-        @media (max-width: 600px) { .footer-grid { grid-template-columns: 1fr; } }
+        /* FOOTER ANIMATION LOGIC */
+        .footer-col ul:hover li a { opacity: 0.3; }
+        .footer-col ul li a:hover { color: #ffffff; opacity: 1 !important; }
+
+        .footer-bottom { padding-top: 40px; border-top: 1px solid rgba(255, 255, 255, 0.05); display: flex; justify-content: space-between; align-items: center; }
+        .footer-bottom p { font-size: 0.65rem; color: rgba(255, 255, 255, 0.25); letter-spacing: 0.15em; font-weight: 700; text-transform: uppercase; }
+        .status-pill { display: flex; align-items: center; gap: 8px; font-size: 0.7rem; color: rgba(255,255,255,0.5); font-weight: 700; text-transform: uppercase; letter-spacing: 1px; }
+        .status-dot { width: 6px; height: 6px; background: #00ff88; border-radius: 50%; box-shadow: 0 0 10px #00ff88; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        @media (max-width: 900px) { 
+            .mobile-toggle { display: flex; }
+            .nav-menu { position: fixed; top: 0; right: -100%; width: 100%; height: 100vh; background: #fff; flex-direction: column; justify-content: center; transition: 0.6s; gap: 30px; z-index: 1050; }
+            .nav-menu.is-active { right: 0; }
+            .footer-grid { grid-template-columns: 1fr 1fr; gap: 40px; }
+            .footer-brand { grid-column: span 2; }
+        }
     </style>
 </head>
 <body>
     <div id="shutter"></div>
-    <div class="leak-container">
-        <div class="leak leak-blue"></div>
-        <div class="leak leak-purple"></div>
-    </div>
+    <div class="leak-container"><div class="leak leak-blue"></div><div class="leak leak-purple"></div></div>
 
     <header id="header">
         <a href="../" class="logo">STACKFORM</a>
+        <div class="mobile-toggle" id="mobile-toggle">
+            <div class="menu-icon"><span></span><span></span><span></span></div>
+        </div>
+        <nav class="nav-menu" id="nav-menu">
+            <a href="../" class="nav-link">Home</a>
+            <a href="../work/" class="nav-link">Work</a>
+            <a href="../about/" class="nav-link">About</a>
+            <a href="../inquiry/" class="btn btn-primary" style="padding: 12px 24px; font-size: 0.7rem; border-radius: 6px;">Get Started</a>
+        </nav>
     </header>
 
     <main class="main-stage">
@@ -168,12 +143,14 @@
         <div class="footer-grid">
             <div class="footer-brand">
                 <a href="../" class="logo">STACKFORM</a>
-                <p style="color:rgba(255,255,255,0.3); font-size:0.8rem; margin-top: 15px;">Digital studio crafting performance-driven interfaces.</p>
+                <p style="color:rgba(255,255,255,0.4); font-size:0.9rem; line-height: 1.7; max-width: 300px; margin-top: 20px;">Digital studio crafting performance-driven interfaces for the next era of the web.</p>
+                <div class="status-pill" style="margin-top: 30px;"><div class="status-dot"></div>Available for Q1 2026 Projects</div>
             </div>
             <div class="footer-col">
                 <h4>Sitemap</h4>
                 <ul>
                     <li><a href="../work/">Work</a></li>
+                    <li><a href="#">Services</a></li>
                     <li><a href="../about/">About</a></li>
                     <li><a href="../inquiry/">Contact</a></li>
                 </ul>
@@ -181,14 +158,35 @@
             <div class="footer-col">
                 <h4>Social</h4>
                 <ul>
-                    <li><a href="#">Twitter</a></li>
+                    <li><a href="#">Twitter / X</a></li>
+                    <li><a href="#">LinkedIn</a></li>
                     <li><a href="#">Instagram</a></li>
+                    <li><a href="https://dribbble.com/stackformdev" target="_blank">Dribbble</a></li>
                 </ul>
             </div>
+            <div class="footer-col">
+                <h4>Studio</h4>
+                <p style="color: rgba(255,255,255,0.5); font-size: 0.85rem; line-height: 1.8;">Melbourne, AU<br>Remote Worldwide<br>stackformdev@gmail.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 STACKFORM STUDIO — ALL RIGHTS RESERVED</p>
+            <p style="opacity: 0.6;">DESIGNED BY PRECISION</p>
         </div>
     </footer>
 
     <script>
+        window.addEventListener('scroll', () => {
+            document.getElementById('header').classList.toggle('active', window.scrollY > 50);
+        }, { passive: true });
+
+        const mobileToggle = document.getElementById('mobile-toggle');
+        const navMenu = document.getElementById('nav-menu');
+        mobileToggle.addEventListener('click', () => {
+            navMenu.classList.toggle('is-active');
+            document.body.style.overflow = navMenu.classList.contains('is-active') ? 'hidden' : 'auto';
+        });
+
         window.addEventListener('load', () => { 
             document.body.classList.add('loaded'); 
         });
