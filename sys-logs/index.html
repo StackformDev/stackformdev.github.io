@@ -100,6 +100,32 @@
             border-color: rgba(244, 63, 94, 0.6);
             box-shadow: 0 8px 25px rgba(244, 63, 94, 0.2);
         }
+
+        /* CIRCULAR CLOSE BUTTON STYLES */
+        .close-btn-circular {
+            width: 44px;
+            height: 44px;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.02);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .close-btn-circular:hover {
+            background-color: rgba(244, 63, 94, 0.2);
+            box-shadow: 0 0 20px rgba(244, 63, 94, 0.4);
+            border-color: rgba(244, 63, 94, 0.5);
+            color: #f43f5e !important;
+            transform: translateY(-2px);
+        }
+
+        .back-btn-hover:hover {
+            color: #2F6BFF !important;
+            background: rgba(47, 107, 255, 0.1);
+            border-color: rgba(47, 107, 255, 0.2);
+        }
     </style>
 </head>
 <body class="grid-bg" x-data="{ 
@@ -206,7 +232,7 @@
                         <template x-for="item in [
                             {id:'firewall', n:'Threat Shield', icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z'},
                             {id:'logs', n:'System Console', icon: 'M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'},
-                            {id:'settings', n:'Infrastructure', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'}
+                            {id:'settings', n:'Infrastructure', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'}
                         ]">
                             <button @click="page = item.id" :class="page === item.id ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'text-zinc-500 border-transparent'" class="nav-item w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-xs font-bold transition-all border">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon"></path></svg>
@@ -446,12 +472,16 @@
         <div x-show="lead" x-cloak class="fixed inset-0 z-[100] flex items-center justify-center p-6" x-data="{ outreachMode: false, subject: '', body: '' }">
             <div @click="lead = null; outreachMode = false" class="absolute inset-0 bg-black/80 backdrop-blur-md"></div>
             
-            <div class="relative w-full max-w-5xl flex items-center justify-center gap-6">
+            <div class="relative w-full max-w-5xl flex items-center justify-center">
                 
                 <div :class="outreachMode ? 'opacity-40 blur-md pointer-events-none -translate-x-12 scale-95' : 'opacity-100 blur-0 translate-x-0 scale-100'" 
-                     class="relative w-full bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col max-h-[85vh] transition-all duration-700 ease-in-out">
+                     class="relative w-full bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] shadow-2xl flex flex-col max-h-[85vh] transition-all duration-700 ease-in-out z-10">
                     
-                    <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.02]">
+                    <button @click="lead = null; outreachMode = false" class="absolute top-6 right-8 z-[110] close-btn-circular text-zinc-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+
+                    <div class="p-8 border-b border-white/5 flex justify-between items-center bg-white/[0.02] rounded-t-[2.5rem]">
                         <div class="flex items-center gap-6">
                             <div class="w-14 h-14 rounded-2xl bg-indigo-600 flex items-center justify-center text-2xl font-black shadow-lg shadow-indigo-500/20" x-text="lead ? lead.name.charAt(0) : ''"></div>
                             <div>
@@ -459,9 +489,6 @@
                                 <h2 class="text-3xl font-bold tracking-tighter" x-text="lead ? lead.name : ''"></h2>
                             </div>
                         </div>
-                        <button @click="lead = null; outreachMode = false" class="p-3 hover:bg-white/5 rounded-full text-zinc-500 hover:text-white transition-all levitate-btn">
-                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-                        </button>
                     </div>
 
                     <div class="flex flex-1 overflow-hidden relative">
@@ -505,26 +532,34 @@
                     </div>
                 </div>
 
+                <button x-show="outreachMode" 
+                        x-transition:enter="transition duration-500 delay-300 opacity-0 -translate-x-4" 
+                        x-transition:enter-end="opacity-100 translate-x-0"
+                        x-transition:leave="transition duration-400 opacity-100 translate-x-0"
+                        x-transition:leave-end="opacity-0 translate-x-full"
+                        @click="outreachMode = false" 
+                        class="absolute left-[250px] top-1/2 -translate-y-1/2 z-[130] w-12 h-12 flex items-center justify-center bg-black/40 text-zinc-500 rounded-full border border-white/5 transition-all back-btn-hover shadow-xl">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                </button>
+
                 <div x-show="outreachMode" 
-                     x-transition:enter="transition ease-out duration-500 transform" 
-                     x-transition:enter-start="translate-x-full opacity-0" 
-                     x-transition:enter-end="translate-x-0 opacity-100"
-                     class="absolute right-0 w-full max-w-2xl bg-[#0a0a0a] border border-indigo-500/30 rounded-[2.5rem] shadow-2xl z-[115] flex flex-col overflow-hidden h-auto max-h-[85vh]">
+                     x-transition:enter="transition ease-out duration-700 transform" 
+                     x-transition:enter-start="translate-x-full opacity-0 scale-95" 
+                     x-transition:enter-end="translate-x-0 opacity-100 scale-100"
+                     x-transition:leave="transition ease-in-out duration-700 transform"
+                     x-transition:leave-start="translate-x-0 opacity-100 scale-100"
+                     x-transition:leave-end="translate-x-[110%] opacity-0"
+                     class="absolute right-0 w-full max-w-2xl bg-[#0a0a0a] border border-white/10 rounded-[2.5rem] shadow-2xl z-[120] flex flex-col overflow-hidden h-auto max-h-[85vh]">
                     
-                    <button x-show="outreachMode" 
-                            x-transition:enter="transition duration-500 delay-300 opacity-0 scale-50" 
-                            x-transition:enter-end="opacity-100 scale-100"
-                            @click="outreachMode = false" 
-                            class="absolute -left-[70px] top-8 z-[120] p-4 bg-white/5 hover:bg-white/10 border border-white/10 text-white rounded-full transition-all levitate-btn">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M15 19l-7-7 7-7"></path></svg>
+                    <button @click="outreachMode = false" class="absolute top-6 right-8 z-[110] close-btn-circular text-zinc-500">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="2.5" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
 
-                    <div class="px-10 py-8 border-b border-white/5 bg-indigo-500/5 flex items-center justify-between shrink-0">
+                    <div class="px-10 py-8 border-b border-white/5 bg-white/[0.02] flex items-center justify-between shrink-0">
                         <div>
                             <span class="text-[9px] font-black text-indigo-500 uppercase tracking-[0.3em]">SECURE_COMPOSER</span>
                             <h2 class="text-2xl font-bold tracking-tighter">Draft Transmission</h2>
                         </div>
-                        <div class="text-[9px] font-mono text-indigo-400/50">v4.5_ENCRYPT</div>
                     </div>
 
                     <div class="p-8 flex flex-col space-y-6">
