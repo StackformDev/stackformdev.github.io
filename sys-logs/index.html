@@ -42,9 +42,26 @@
             box-shadow: 0 8px 25px rgba(47, 107, 255, 0.1);
         }
 
-        .nav-item { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid transparent; }
+        .nav-item { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); border: 1px solid transparent; position: relative; }
         .nav-item:hover { padding-left: 1.5rem; color: white; }
         .nav-item:active { transform: scale(0.97); }
+
+        /* CUSTOM HOVER UNDERLINE ANIMATION */
+        .nav-item::after { 
+            content: ''; 
+            position: absolute; 
+            bottom: -2px; 
+            height: 3px; 
+            width: 0; 
+            background-color: #2F6BFF; 
+            right: 0; 
+            transition: width 0.4s ease; 
+        }
+
+        .nav-item:hover::after { 
+            width: 40%; 
+            left: 0; 
+        }
 
         .grid-bg { background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.02) 1px, transparent 0); background-size: 32px 32px; }
         .shimmer { background: linear-gradient(90deg, transparent, rgba(255,255,255,0.03), transparent); background-size: 200% 100%; animation: shimmer 5s infinite; }
@@ -126,6 +143,43 @@
             background: rgba(47, 107, 255, 0.1);
             border-color: rgba(47, 107, 255, 0.2);
         }
+
+        /* CALENDAR STYLES */
+        .month-tab { cursor: pointer; transition: all 0.2s; border-bottom: 2px solid transparent; }
+        .month-tab.active { border-color: #2F6BFF; color: white; }
+
+        /* NEW: Pulse Ring for Network Nodes */
+        .pulse-ring {
+            position: relative;
+            width: 12px;
+            height: 12px;
+        }
+        .pulse-ring::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #2F6BFF;
+            animation: ripple 2s infinite;
+        }
+        @keyframes ripple {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
+        /* UPDATED DEPLOYMENT BUTTON GLOWS */
+        .btn-sapphire:hover { border-color: rgba(15, 82, 186, 0.4) !important; box-shadow: 0 8px 25px rgba(15, 82, 186, 0.15) !important; }
+        .btn-sapphire:hover .icon-box { background: rgba(15, 82, 186, 0.2) !important; border-color: rgba(15, 82, 186, 0.4) !important; color: #0F52BA !important; }
+
+        .btn-emerald:hover { border-color: rgba(80, 200, 120, 0.4) !important; box-shadow: 0 8px 25px rgba(80, 200, 120, 0.15) !important; }
+        .btn-emerald:hover .icon-box { background: rgba(80, 200, 120, 0.2) !important; border-color: rgba(80, 200, 120, 0.4) !important; color: #50C878 !important; }
+
+        .btn-ruby:hover { border-color: rgba(224, 17, 95, 0.4) !important; box-shadow: 0 8px 25px rgba(224, 17, 95, 0.15) !important; }
+        .btn-ruby:hover .icon-box { background: rgba(224, 17, 95, 0.2) !important; border-color: rgba(224, 17, 95, 0.4) !important; color: #E0115F !important; }
+
+        .btn-quartz:hover { border-color: rgba(225, 225, 225, 0.3) !important; box-shadow: 0 8px 25px rgba(225, 225, 225, 0.1) !important; }
+        .btn-quartz:hover .icon-box { background: rgba(225, 225, 225, 0.15) !important; border-color: rgba(225, 225, 225, 0.3) !important; color: #E1E1E1 !important; }
     </style>
 </head>
 <body class="grid-bg" x-data="{ 
@@ -137,6 +191,12 @@
     inbox: [],
     ghStats: { views: 0 },
     maintenanceActive: false,
+    /* NEW CALENDAR STATE */
+    currentYear: 2024,
+    currentMonth: 'JAN',
+    months: ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'],
+    yearHoldTimer: null,
+    yearInterval: null,
     settings: { 
         edgeCaching: true, 
         aiResponse: true, 
@@ -155,6 +215,30 @@
     toggleMaintenance() {
         this.maintenanceActive = !this.maintenanceActive;
         localStorage.setItem('maintenanceMode', this.maintenanceActive);
+    },
+    /* YEAR NAVIGATION WITH 1.5S HOLD */
+    startYearChange(dir) {
+        this.yearHoldTimer = setTimeout(() => {
+            this.yearInterval = setInterval(() => {
+                this.currentYear += dir;
+                this.refreshData();
+            }, 100);
+        }, 1500); // 1.5 second hold requirement
+    },
+    stopYearChange(dir, cancel = false) {
+        if (!this.yearInterval && !cancel) {
+            // If they didn't hold for 1.5s and didn't just leave the button, do single click
+            this.currentYear += dir;
+            this.refreshData();
+        }
+        clearTimeout(this.yearHoldTimer);
+        clearInterval(this.yearInterval);
+        this.yearHoldTimer = null;
+        this.yearInterval = null;
+    },
+    refreshData() {
+        // Simulates data changing based on time selection
+        updateChart();
     },
     async fetchGithubData() {
         try {
@@ -186,6 +270,11 @@
         this.loadLeads();
     },
     init() { 
+        /* AUTO SYNC TIME */
+        const now = new Date();
+        this.currentYear = now.getFullYear();
+        this.currentMonth = this.months[now.getMonth()];
+
         setInterval(() => { this.currentTime = new Date().toLocaleTimeString() }, 1000);
         initParticles();
         this.loadLeads();
@@ -257,9 +346,7 @@
         <main class="flex-1 flex flex-col min-w-0 bg-[#050505]">
             <header class="h-20 border-b border-white/5 flex items-center justify-between px-10 glass shrink-0 relative z-20">
                 <div class="relative w-full max-w-md group">
-                    <input type="text" x-model="search" placeholder="Search system resources..." class="bg-white/5 border border-white/5 rounded-xl pl-12 pr-4 py-2.5 text-xs w-full focus:outline-none focus:border-indigo-500/50 transition-all focus:ring-1 focus:ring-indigo-500/30">
-                    <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </div>
+                    </div>
                 <div class="flex items-center gap-6">
                     <button class="relative p-2 rounded-lg hover:bg-white/5 transition-colors active:scale-90">
                         <span x-show="notifications > 0" class="absolute top-2 right-2 w-2 h-2 bg-rose-500 rounded-full animate-ping"></span>
@@ -275,6 +362,26 @@
                         <div class="stagger-1">
                             <h2 class="text-5xl font-extrabold tracking-tighter">Systems <span class="text-indigo-500">Hub</span></h2>
                             <p class="text-zinc-500 mt-2 font-medium">Real-time status of your global decentralized network.</p>
+                        </div>
+                    </div>
+
+                    <div class="linear-border bg-zinc-900/40 rounded-[2.5rem] p-8 stagger-2">
+                        <div class="flex items-center justify-center gap-10 mb-8">
+                            <button @mousedown="startYearChange(-1)" @mouseup="stopYearChange(-1)" @mouseleave="stopYearChange(-1, true)" class="text-zinc-500 hover:text-white transition-all transform active:scale-75">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M15 19l-7-7 7-7"></path></svg>
+                            </button>
+                            <div class="text-center">
+                                <p class="text-[9px] font-black text-indigo-500 uppercase tracking-[0.4em] mb-1">ARCHIVE YEAR</p>
+                                <h3 class="text-6xl font-black tracking-tighter w-48" x-text="currentYear"></h3>
+                            </div>
+                            <button @mousedown="startYearChange(1)" @mouseup="stopYearChange(1)" @mouseleave="stopYearChange(1, true)" class="text-zinc-500 hover:text-white transition-all transform active:scale-75">
+                                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="3" d="M9 5l7 7-7 7"></path></svg>
+                            </button>
+                        </div>
+                        <div class="flex justify-between border-t border-white/5 pt-6 overflow-x-auto custom-scroll">
+                            <template x-for="m in months">
+                                <div @click="currentMonth = m; refreshData()" :class="currentMonth === m ? 'month-tab active text-white' : 'text-zinc-500'" class="month-tab px-4 py-2 text-[10px] font-black uppercase tracking-widest hover:text-white" x-text="m"></div>
+                            </template>
                         </div>
                     </div>
 
@@ -302,7 +409,7 @@
                     <div class="grid grid-cols-1 xl:grid-cols-3 gap-8">
                         <div class="xl:col-span-2 p-10 rounded-[2.5rem] linear-border bg-gradient-to-br from-zinc-900/40 to-black h-[480px] flex flex-col relative overflow-hidden stagger-3 page-enter">
                             <div class="shimmer absolute inset-0 opacity-10"></div>
-                            <h3 class="font-black text-xl mb-8">Interaction Density (Real Data)</h3>
+                            <h3 class="font-black text-xl mb-8">Interaction Density (<span x-text="currentMonth"></span> <span x-text="currentYear"></span>)</h3>
                             <div class="flex-1 relative z-10">
                                 <canvas id="interactionChart"></canvas>
                             </div>
@@ -320,6 +427,55 @@
                                     </div>
                                 </template>
                             </div>
+                        </div>
+                    </div>
+
+                    <div class="stagger-4 page-enter">
+                        <h3 class="text-[10px] font-black text-zinc-600 uppercase tracking-[0.3em] mb-6 ml-1">Rapid Deployment Protocols</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                            <button class="group relative p-6 rounded-[2rem] linear-border glass btn-sapphire transition-all flex flex-col gap-4 items-start overflow-hidden">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-[#0F52BA]/5 blur-3xl -mr-12 -mt-12 group-hover:bg-[#0F52BA]/10 transition-colors"></div>
+                                <div class="icon-box w-10 h-10 rounded-xl bg-[#0F52BA]/10 border border-[#0F52BA]/20 flex items-center justify-center text-[#0F52BA] group-hover:scale-110 transition-all duration-500 shadow-[0_0_15px_rgba(15,82,186,0.3)]">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                </div>
+                                <div class="space-y-1 text-left">
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">Turbo Cache</span>
+                                    <p class="text-[9px] font-bold text-[#0F52BA]/50 uppercase">Accelerate Edge</p>
+                                </div>
+                            </button>
+                    
+                            <button class="group relative p-6 rounded-[2rem] linear-border glass btn-emerald transition-all flex flex-col gap-4 items-start overflow-hidden">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-[#50C878]/5 blur-3xl -mr-12 -mt-12 group-hover:bg-[#50C878]/10 transition-colors"></div>
+                                <div class="icon-box w-10 h-10 rounded-xl bg-[#50C878]/10 border border-[#50C878]/20 flex items-center justify-center text-[#50C878] group-hover:scale-110 transition-all duration-500 shadow-[0_0_15px_rgba(80,200,120,0.3)]">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                </div>
+                                <div class="space-y-1 text-left">
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">Health Sync</span>
+                                    <p class="text-[9px] font-bold text-[#50C878]/50 uppercase">Cluster Align</p>
+                                </div>
+                            </button>
+                    
+                            <button class="group relative p-6 rounded-[2rem] linear-border glass btn-ruby transition-all flex flex-col gap-4 items-start overflow-hidden">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-[#E0115F]/5 blur-3xl -mr-12 -mt-12 group-hover:bg-[#E0115F]/10 transition-colors"></div>
+                                <div class="icon-box w-10 h-10 rounded-xl bg-[#E0115F]/10 border border-[#E0115F]/20 flex items-center justify-center text-[#E0115F] group-hover:scale-110 transition-all duration-500 shadow-[0_0_15px_rgba(224,17,95,0.3)]">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                </div>
+                                <div class="space-y-1 text-left">
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">Lockdown</span>
+                                    <p class="text-[9px] font-bold text-[#E0115F]/50 uppercase">Zero-Trust</p>
+                                </div>
+                            </button>
+                    
+                            <button class="group relative p-6 rounded-[2rem] linear-border glass btn-quartz transition-all flex flex-col gap-4 items-start overflow-hidden">
+                                <div class="absolute top-0 right-0 w-24 h-24 bg-[#E1E1E1]/5 blur-3xl -mr-12 -mt-12 group-hover:bg-[#E1E1E1]/10 transition-colors"></div>
+                                <div class="icon-box w-10 h-10 rounded-xl bg-[#E1E1E1]/10 border border-[#E1E1E1]/20 flex items-center justify-center text-[#E1E1E1] group-hover:scale-110 transition-all duration-500 shadow-[0_0_15px_rgba(225,225,225,0.3)]">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                </div>
+                                <div class="space-y-1 text-left">
+                                    <span class="text-[10px] font-black uppercase tracking-widest text-zinc-400 group-hover:text-white transition-colors">Reboot Node</span>
+                                    <p class="text-[9px] font-bold text-[#E1E1E1]/50 uppercase">Hard Reset</p>
+                                </div>
+                            </button>
                         </div>
                     </div>
                 </div>
@@ -589,14 +745,33 @@
 
     <script>
         let myChart;
+        
+        // Plugin to display NO DATA AVAILABLE when chart is empty
+        const emptyChartPlugin = {
+            id: 'emptyChart',
+            afterDraw(chart) {
+                if (chart.data.datasets[0].data.length === 0) {
+                    const { ctx, width, height } = chart;
+                    ctx.save();
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.font = 'bold 12px Inter';
+                    ctx.fillStyle = '#52525b';
+                    ctx.fillText('NO DATA AVAILABLE', width / 2, height / 2);
+                    ctx.restore();
+                }
+            }
+        };
+
         function initChart() {
             const ctx = document.getElementById('interactionChart').getContext('2d');
             myChart = new Chart(ctx, {
                 type: 'line',
+                plugins: [emptyChartPlugin],
                 data: {
-                    labels: Array(14).fill(''),
+                    labels: [],
                     datasets: [{
-                        data: Array(14).fill(0).map(() => Math.floor(Math.random() * 20)),
+                        data: [],
                         borderColor: '#2F6BFF',
                         backgroundColor: 'rgba(47, 107, 255, 0.1)',
                         borderWidth: 4,
@@ -615,8 +790,13 @@
         }
         function updateChart(views) {
             if(!myChart) return;
-            myChart.data.labels = views.map(v => v.timestamp.split('T')[0]);
-            myChart.data.datasets[0].data = views.map(v => v.count);
+            if(views && views.length > 0) {
+                myChart.data.labels = views.map(v => v.timestamp.split('T')[0]);
+                myChart.data.datasets[0].data = views.map(v => v.count);
+            } else {
+                myChart.data.labels = [];
+                myChart.data.datasets[0].data = [];
+            }
             myChart.update();
         }
         function initParticles() {
