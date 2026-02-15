@@ -19,18 +19,23 @@
         }
 
         /* PC: 16:9 and 16:10 Hardware Screens */
-        @media (device-aspect-ratio: 16/9), (device-aspect-ratio: 16/10), (aspect-ratio: 16/9), (aspect-ratio: 16/10) { 
+        @media (device-aspect-ratio: 16/9), (device-aspect-ratio: 16/10) { 
             #access-blocker { display: none !important; } 
         }
         
-        /* MOBILE: 19.5:9 Hardware Screens (iPhone/Modern Android/Galaxy A15) */
-        @media (device-aspect-ratio: 19.5/9), (device-aspect-ratio: 13/6), (device-aspect-ratio: 39/18), (aspect-ratio: 19.5/9), (aspect-ratio: 13/6), (aspect-ratio: 39/18) { 
+        /* MOBILE: 19.5:9 Hardware Screens (iPhone 15/Modern Android) */
+        @media (device-aspect-ratio: 19.5/9), (device-aspect-ratio: 13/6), (device-aspect-ratio: 39/18), (device-aspect-ratio: 2/1) { 
             #access-blocker { display: none !important; } 
         }
 
         /* FALLBACK: Use min/max device ranges to catch browser UI offsets */
-        @media (min-device-aspect-ratio: 1.5/1) and (max-device-aspect-ratio: 2.2/1) { 
+        @media (min-device-aspect-ratio: 1.5/1) and (max-device-aspect-ratio: 1.9/1) { 
             #access-blocker { display: none !important; } 
+        }
+
+        /* MOBILE TALL FALLBACK */
+        @media (min-device-aspect-ratio: 1/2.2) and (max-device-aspect-ratio: 1/1.8) {
+            #access-blocker { display: none !important; }
         }
 
         #access-blocker { animation: triggerRedirect 0.1s; }
@@ -39,15 +44,11 @@
     <script>
         function checkAccess() {
             const blocker = document.getElementById('access-blocker');
+            const isAdminPath = window.location.pathname.includes('sys-logs');
             
-            // Refined calculation for Samsung/Android viewports - BYPASS REMOVED
-            const ratio = window.innerWidth / window.innerHeight;
-            const isTargetRatio = (ratio > 1.5 && ratio < 1.9) || (ratio > 2.0 && ratio < 2.3);
-
-            if (blocker && window.getComputedStyle(blocker).display !== 'none' && !isTargetRatio) {
+            // If blocker is still visible (wrong ratio), force redirect
+            if (blocker && window.getComputedStyle(blocker).display !== 'none' && !isAdminPath) {
                 window.location.replace('https://stackformdev.github.io/404/');
-            } else if (isTargetRatio) {
-                blocker.style.display = 'none';
             }
         }
         window.addEventListener('load', checkAccess);
@@ -225,14 +226,14 @@
         .rebooting { animation: pulse 0.1s infinite !important; opacity: 0.5 !important; }
 
         @keyframes row-pulse {
-            0% { box-shadow: 0 0 0 0px rgba(47, 107, 255, 0.7); }
-            100% { box-shadow: 0 0 0 20px rgba(47, 107, 255, 0); }
+            0% { box-shadow: inset 0 0 0 0px rgba(47, 107, 255, 0.4); background: rgba(47, 107, 255, 0.05); }
+            50% { box-shadow: inset 0 0 20px 2px rgba(47, 107, 255, 0.2); background: rgba(47, 107, 255, 0.15); }
+            100% { box-shadow: inset 0 0 0 0px rgba(47, 107, 255, 0.4); background: rgba(47, 107, 255, 0.05); }
         }
         .highlight-pulse {
             position: relative;
             z-index: 50;
-            outline: 2px solid #2F6BFF;
-            animation: row-pulse 1.5s infinite;
+            animation: row-pulse 1.8s infinite cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .notification-card:hover .glow-bg {
@@ -377,7 +378,7 @@
             if(el) {
                 el.scrollIntoView({ behavior: 'smooth', block: 'center' });
                 el.classList.add('highlight-pulse');
-                setTimeout(() => el.classList.remove('highlight-pulse'), 3000);
+                setTimeout(() => el.classList.remove('highlight-pulse'), 5000);
             }
         }, 300);
     },
