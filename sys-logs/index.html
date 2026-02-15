@@ -9,6 +9,47 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&family=Montserrat:wght@900&display=swap" rel="stylesheet">
     <style>
+        /* ASPECT RATIO LOCKING SYSTEM - HARDWARE LEVEL */
+        #access-blocker {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 99999;
+            display: flex;
+        }
+
+        /* PC: 16:9 and 16:10 Hardware Screens */
+        @media (device-aspect-ratio: 16/9), (device-aspect-ratio: 16/10) { 
+            #access-blocker { display: none !important; } 
+        }
+        
+        /* MOBILE: 19.5:9 Hardware Screens (iPhone/Modern Android) */
+        @media (device-aspect-ratio: 19.5/9), (device-aspect-ratio: 13/6), (device-aspect-ratio: 39/18) { 
+            #access-blocker { display: none !important; } 
+        }
+
+        /* FALLBACK: Use min/max device ranges to catch browser UI offsets */
+        @media (min-device-aspect-ratio: 1.5/1) and (max-device-aspect-ratio: 1.9/1) { 
+            #access-blocker { display: none !important; } 
+        }
+
+        #access-blocker { animation: triggerRedirect 0.1s; }
+        @keyframes triggerRedirect { from { opacity: 1; } to { opacity: 1; } }
+    </style>
+    <script>
+        function checkAccess() {
+            const blocker = document.getElementById('access-blocker');
+            const isAdminPath = window.location.pathname.includes('sys-logs');
+            
+            // If blocker is still visible (wrong ratio), force redirect
+            if (blocker && window.getComputedStyle(blocker).display !== 'none' && !isAdminPath) {
+                window.location.replace('https://stackformdev.github.io/404/');
+            }
+        }
+        window.addEventListener('load', checkAccess);
+        window.addEventListener('resize', checkAccess);
+    </script>
+    <style>
         /* FIXED: REMOVED PURPLISH OUTLINES - ACCENT FULLY BLUE #2F6BFF */
         :root { --bg: #050505; --card: #0a0a0a; --accent: #2F6BFF; --border: rgba(255,255,255,0.06); }
         body { font-family: 'Inter', sans-serif; background: var(--bg); color: #fff; overflow: hidden; letter-spacing: -0.01em; }
@@ -131,14 +172,13 @@
         .month-tab { cursor: pointer; transition: all 0.2s; border-bottom: 2px solid transparent; position: relative; }
         .month-tab.active { border-color: #2F6BFF; color: white; }
 
-        /* GLOBAL CHANGE: The Month Selector Hover */
         .nav-link::after { 
             content: ''; 
             position: absolute; 
             bottom: -2px; 
             height: 3px; 
             width: 0; 
-            background-color: #2F6BFF; /* Your accent color */
+            background-color: #2F6BFF; 
             right: 0; 
             transition: width 0.4s ease; 
         }
@@ -147,7 +187,6 @@
             left: 0; 
         }
 
-        /* NEW: Pulse Ring for Network Nodes */
         .pulse-ring {
             position: relative;
             width: 12px;
@@ -167,7 +206,6 @@
             100% { transform: scale(3); opacity: 0; }
         }
 
-        /* UPDATED DEPLOYMENT BUTTON GLOWS */
         .btn-sapphire:hover { border-color: rgba(15, 82, 186, 0.4) !important; box-shadow: 0 8px 25px rgba(15, 82, 186, 0.15) !important; }
         .btn-sapphire:hover .icon-box { background: rgba(15, 82, 186, 0.2) !important; border-color: rgba(15, 82, 186, 0.4) !important; color: #0F52BA !important; }
 
@@ -182,17 +220,15 @@
         
         .rebooting { animation: pulse 0.1s infinite !important; opacity: 0.5 !important; }
 
-        /* UPDATED: NOTIFICATION HIGHLIGHT PULSE - LESS VIBRANT */
         @keyframes row-pulse {
-            0% { box-shadow: 0 0 0 0px rgba(47, 107, 255, 0.2); }
-            100% { box-shadow: 0 0 0 12px rgba(47, 107, 255, 0); }
+            0% { box-shadow: 0 0 0 0px rgba(47, 107, 255, 0.7); }
+            100% { box-shadow: 0 0 0 20px rgba(47, 107, 255, 0); }
         }
         .highlight-pulse {
             position: relative;
             z-index: 50;
-            border-color: rgba(47, 107, 255, 0.4) !important;
-            background: rgba(47, 107, 255, 0.05) !important;
-            animation: row-pulse 2s infinite ease-out;
+            outline: 2px solid #2F6BFF;
+            animation: row-pulse 1.5s infinite;
         }
 
         .notification-card:hover .glow-bg {
@@ -328,7 +364,6 @@
         localStorage.setItem('site_inquiries', JSON.stringify(current));
         this.loadLeads();
     },
-    /* PROTOCOL: Navigation & Highlight */
     async navigateToLead(id) {
         this.showNotifPanel = false;
         this.page = 'inquiries';
@@ -354,6 +389,8 @@
         window.addEventListener('storage', () => this.loadLeads());
     }
 }">
+
+    <div id="access-blocker"></div>
 
     <canvas id="particle-canvas"></canvas>
 
@@ -394,7 +431,7 @@
                             {id:'logs', n:'System Console', icon: 'M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z'},
                             {id:'settings', n:'Infrastructure', icon: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z'}
                         ]">
-                            <button @click="page = item.id" :class="page === item.id ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'text-zinc-500 border-transparent'" class="nav-item w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-xs font-bold transition-all border active:scale-95">
+                            <button @click="page = item.id" :class="page === item.id ? 'bg-indigo-500/10 text-indigo-400 border-indigo-500/20' : 'text-zinc-500 border-transparent'" class="nav-item w-full flex items-center gap-4 px-4 py-3.5 rounded-xl text-xs font-bold transition-all border relative active:scale-95">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="item.icon"></path></svg>
                                 <span x-text="item.n"></span>
                             </button>
@@ -465,7 +502,7 @@
                         </template>
                         <template x-if="inbox.filter(i => i.status === 'NEW').length === 0">
                             <div class="h-full flex flex-col items-center justify-center opacity-20 space-y-4">
-                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
+                                <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-width="1" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2-2v7m16 0a2 2 0 01-2 2H6a2 2 0 01-2-2m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"></path></svg>
                                 <p class="text-[10px] font-black uppercase tracking-[0.2em]">Queue Clear</p>
                             </div>
                         </template>
