@@ -19,17 +19,17 @@
         }
 
         /* PC: 16:9 and 16:10 Hardware Screens */
-        @media (device-aspect-ratio: 16/9), (device-aspect-ratio: 16/10) { 
+        @media (device-aspect-ratio: 16/9), (device-aspect-ratio: 16/10), (aspect-ratio: 16/9), (aspect-ratio: 16/10) { 
             #access-blocker { display: none !important; } 
         }
         
-        /* MOBILE: 19.5:9 Hardware Screens (iPhone/Modern Android) */
-        @media (device-aspect-ratio: 19.5/9), (device-aspect-ratio: 13/6), (device-aspect-ratio: 39/18) { 
+        /* MOBILE: 19.5:9 Hardware Screens (iPhone/Modern Android/Galaxy A15) */
+        @media (device-aspect-ratio: 19.5/9), (device-aspect-ratio: 13/6), (device-aspect-ratio: 39/18), (aspect-ratio: 19.5/9), (aspect-ratio: 13/6), (aspect-ratio: 39/18) { 
             #access-blocker { display: none !important; } 
         }
 
         /* FALLBACK: Use min/max device ranges to catch browser UI offsets */
-        @media (min-device-aspect-ratio: 1.5/1) and (max-device-aspect-ratio: 1.9/1) { 
+        @media (min-device-aspect-ratio: 1.5/1) and (max-device-aspect-ratio: 2.2/1) { 
             #access-blocker { display: none !important; } 
         }
 
@@ -39,11 +39,15 @@
     <script>
         function checkAccess() {
             const blocker = document.getElementById('access-blocker');
-            const isAdminPath = window.location.pathname.includes('sys-logs');
             
-            // If blocker is still visible (wrong ratio), force redirect
-            if (blocker && window.getComputedStyle(blocker).display !== 'none' && !isAdminPath) {
+            // Refined calculation for Samsung/Android viewports - BYPASS REMOVED
+            const ratio = window.innerWidth / window.innerHeight;
+            const isTargetRatio = (ratio > 1.5 && ratio < 1.9) || (ratio > 2.0 && ratio < 2.3);
+
+            if (blocker && window.getComputedStyle(blocker).display !== 'none' && !isTargetRatio) {
                 window.location.replace('https://stackformdev.github.io/404/');
+            } else if (isTargetRatio) {
+                blocker.style.display = 'none';
             }
         }
         window.addEventListener('load', checkAccess);
